@@ -14,6 +14,8 @@
     <PackageTags>HealthForms</PackageTags>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>3.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
