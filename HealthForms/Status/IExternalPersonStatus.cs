@@ -1,9 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace HealthForms
+namespace HealthForms.Status
 {
-    public interface IPersonStatus
+    public interface IExternalPersonStatus
     {
         [JsonProperty(propertyName: "personId")]
         int PersonId { get; set; }
