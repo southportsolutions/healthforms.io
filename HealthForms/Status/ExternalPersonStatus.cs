@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace HealthForms
+namespace HealthForms.Status
 {
-    public class PersonStatus : IPersonStatus
+    public class ExternalExternalPersonStatus : IExternalPersonStatus
     {
         public int PersonId { get; set; }
         public int EventId { get; set; }
