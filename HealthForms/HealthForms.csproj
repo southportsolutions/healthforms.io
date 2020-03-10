@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461;net452</TargetFrameworks>
     <Authors>Robert Anstett</Authors>
     <Company>Southport Solutions, LLC</Company>
     <Product>HealthForms.io</Product>
@@ -15,7 +15,7 @@
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.1.3</Version>
+    <Version>3.1.4</Version>
     <PackageIcon>iconLarge.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
