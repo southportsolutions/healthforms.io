@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net461;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Robert Anstett</Authors>
     <Company>Southport Solutions, LLC</Company>
     <Product>HealthForms.io</Product>
     <Description>Use this package to interface with HealthForms.io.</Description>
-    <Copyright>2020</Copyright>
+    <Copyright>Southport Solutions LLC, All Rights Reserved</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/southportsolutions/healthforms.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +29,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HealthForms.Api.Core\HealthForms.Api.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+      <langversion>latest</langversion>
+
+	  <Authors>Robert Anstett</Authors>
+	  <Company>Southport Solutions, LLC</Company>
+	  <Description>Use this package to interface with HealthForms.io.</Description>
+	  <Copyright>© Southport Solutions, LLC. All rights reserved.</Copyright>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageProjectUrl>https://github.com/southportsolutions/healthforms.io</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
+	  <RepositoryType>GIT</RepositoryType>
+	  <PackageTags>HealthForms</PackageTags>
+	  <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
+	  <NeutralLanguage>en-US</NeutralLanguage>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	  <PackageIcon>iconLarge.png</PackageIcon>
+	  <PackageIconUrl />
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="iconLarge.png" />
+	</ItemGroup>
+</Project>
