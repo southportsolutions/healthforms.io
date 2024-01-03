@@ -289,3 +289,4 @@ __pycache__/
 /Help
 /GuidebookConsole/appsettings.local.json
 /KlikTest/appsettings.local.json
+/HealthForms.Api.Tests/appsettings.json
