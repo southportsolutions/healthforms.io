@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthForms.Api", "HealthFo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8D3706F7-1B47-4DFB-857E-7253A3DF95FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthForms.Api.Core", "HealthForms.Api.Core\HealthForms.Api.Core.csproj", "{03943F86-8F6C-40CF-BF76-BB726D9BC450}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthForms.Api.Core", "HealthForms.Api.Core\HealthForms.Api.Core.csproj", "{03943F86-8F6C-40CF-BF76-BB726D9BC450}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthForms.Api.Tests", "HealthForms.Api.Tests\HealthForms.Api.Tests.csproj", "{1C86B6D7-E171-4F9F-BB5F-E22C69A5C014}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{03943F86-8F6C-40CF-BF76-BB726D9BC450}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03943F86-8F6C-40CF-BF76-BB726D9BC450}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03943F86-8F6C-40CF-BF76-BB726D9BC450}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C86B6D7-E171-4F9F-BB5F-E22C69A5C014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C86B6D7-E171-4F9F-BB5F-E22C69A5C014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C86B6D7-E171-4F9F-BB5F-E22C69A5C014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C86B6D7-E171-4F9F-BB5F-E22C69A5C014}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
