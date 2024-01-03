@@ -1,8 +1,8 @@
 ﻿using HealthForms.Api.Options;
 using Microsoft.Extensions.Options;
-using System.Text;
-using System.Text.Json;
 using HealthForms.Api.Errors;
+using IdentityModel.Client;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace HealthForms.Api.Clients;
@@ -11,34 +11,39 @@ public class HealthFormsApiHttpClient
 {
     private ILogger<HealthFormsApiHttpClient> Log { get; }
     private readonly HttpClient _httpClient;
+    private readonly IMemoryCache _memoryCache;
     private readonly HealthFormsApiOptions _options;
     private AuthResponse? _accessToken;
 
-    public HealthFormsApiHttpClient(HttpClient httpClient, IOptions<HealthFormsApiOptions> options, ILogger<HealthFormsApiHttpClient> log)
+    public HealthFormsApiHttpClient(HttpClient httpClient, IOptions<HealthFormsApiOptions> options, IMemoryCache memoryCache, ILogger<HealthFormsApiHttpClient> log)
     {
         Log = log;
         _httpClient = httpClient;
+        _memoryCache = memoryCache;
         _options = options.Value;
     }
 
     #region Access Token
 
-    public async Task<AuthResponse> GetAccessToken()
+    public async Task<AuthResponse> GetAccessToken(string tenantToken)
     {
+        _memoryCache.TryGetValue(tenantToken, out AuthResponse? _accessToken);
         if (_accessToken!=null && _accessToken.ExpiresOn >= DateTime.UtcNow) return _accessToken;
 
-        var content = new StringContent($"grant_type=client_credentials&client_id={_options.ClientId}&client_secret={_options.ClientSecret}&scope={_options.Scopes}", Encoding.UTF8, "application/x-www-form-urlencoded");
         try
         {
-            var response = await _httpClient.PostAsync($"{_options.HostAddressAuth}connect/token", content);
-            if (!response.IsSuccessStatusCode) throw new HealthFormsException($"Error getting the admin token. Status Code: {response.StatusCode} Address: {response.RequestMessage.RequestUri} Message: {await response.Content.ReadAsStringAsync()}");
+            var response = await _httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            {
+                Address = _options.HostAddressAuth,
+                ClientId = _options.ClientId,
+                ClientSecret = _options.ClientSecret,
+                RefreshToken = tenantToken
+            });
 
-            var tokenString = await response.Content.ReadAsStringAsync();
-            var token = JsonSerializer.Deserialize<AuthResponse>(tokenString);
-            _accessToken = token ?? throw new HealthFormsException($"The admin token response was corrupt. Status Code: {response.StatusCode} Address: {response.RequestMessage.RequestUri}");
-                
-            _accessToken.ExpiresOn = DateTime.UtcNow.AddSeconds(_accessToken.ExpiresIn - 5 ?? 0);
-            _accessToken = token;
+            if (response.IsError) throw new HealthFormsAuthException("Unable to claim HealthForms.io code.", response);
+            _accessToken = new AuthResponse(response);
+            _memoryCache.Set(tenantToken, _accessToken, TimeSpan.FromSeconds(response.ExpiresIn-10));
+
             return _accessToken;
         }
         catch (HealthFormsException e)
@@ -51,6 +56,43 @@ public class HealthFormsApiHttpClient
             Log.LogError(e, $"Error getting the admin token. AuthHost: {_options.HostAddressAuth} Message: {e.Message}");
             throw new HealthFormsException($"Error getting the admin token. AuthHost: {_options.HostAddressAuth} Message: {e.Message}");
         }
+    }
+
+    #endregion
+
+    #region Claim Code
+
+    public async Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default)
+    {
+        var authToken = await ClaimCode(code, codeVerifier, cancellationToken);
+        if (string.IsNullOrWhiteSpace(authToken.RefreshToken)) Log.LogCritical("Unable to get tenant HealthForms.io access token.");
+
+        return authToken.RefreshToken ?? string.Empty;
+    }
+
+    public async Task<TokenResponse> ClaimCode(string code, string codeVerifier, CancellationToken cancellationToken = default)
+    {
+        var authTokenResponse = await _httpClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest
+        {
+            Address = _options.HostAddressAuth,
+            ClientId = _options.ClientId,
+            ClientSecret = _options.ClientSecret,
+            Code = code,
+            RedirectUri = _options.RedirectUrl,
+
+            // optional PKCE parameter
+            CodeVerifier = codeVerifier
+        }, cancellationToken: cancellationToken);
+
+        if (!authTokenResponse.IsError)
+        {
+            _memoryCache.Set(authTokenResponse.RefreshToken, _accessToken, TimeSpan.FromSeconds(authTokenResponse.ExpiresIn-10));
+            return authTokenResponse;
+        }
+
+        Log.LogCritical("Unable to claim HealthForms.io code. Reason: {reason}  Message: {message}", authTokenResponse.ErrorType, authTokenResponse.ErrorDescription);
+        throw new HealthFormsAuthException("Unable to claim HealthForms.io code.", authTokenResponse);
+
     }
 
     #endregion

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace HealthForms.Api.Options
 {
     public class HealthFormsApiOptions
@@ -12,6 +9,7 @@ namespace HealthForms.Api.Options
         public string HostAddressApi => $"{HostAddress}api/";
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
-        public string Scopes { get; set; } = "openid profile offline";
+        public string Scopes { get; set; } = "profile openid offline_access hf_public_all";
+        public string RedirectUrl { get; set; }
     }
 }
