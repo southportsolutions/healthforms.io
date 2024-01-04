@@ -13,7 +13,7 @@ public class AuthResponse
         ExpiresOn = DateTime.UtcNow.AddSeconds(response.ExpiresIn - 5);
     }
 
-    public string? IdToken { get; set; };
+    public string? IdToken { get; set; }
     public string? AccessToken { get; set; }
     public string? TokenType { get; set; }
     public int? ExpiresIn { get; set; }

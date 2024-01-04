@@ -4,6 +4,10 @@ using HealthForms.Api.Errors;
 using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using HealthForms.Api.Core.Models;
+using IdentityModel;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace HealthForms.Api.Clients;
 
@@ -62,6 +66,47 @@ public class HealthFormsApiHttpClient
 
     #region Claim Code
 
+    public AuthRedirect GetRedirectUrl()
+    {
+        var codeVerifier = GenerateCodeVerifier();
+        var codeChallenge = GenerateCodeChallenge(codeVerifier);
+
+        var url = new RequestUrl($"{_options.HostAddressAuth}connect/authorize")
+            .CreateAuthorizeUrl(
+                clientId: _options.ClientId,
+                responseType: OidcConstants.ResponseTypes.Code,
+                scope: _options.Scopes,
+                redirectUri: _options.RedirectUrl,
+                codeChallenge: codeChallenge,
+                codeChallengeMethod: OidcConstants.CodeChallengeMethods.Sha256,
+                nonce: CryptoRandom.CreateUniqueId(32),
+                state: CryptoRandom.CreateUniqueId(32));
+
+        return new AuthRedirect { CodeVerifier = codeVerifier, Uri = url };
+    }
+
+    public static string GenerateCodeVerifier()
+    {
+        const int codeVerifierLength = 64; // You can choose a length between 43 and 128
+        using var rng = new RNGCryptoServiceProvider();
+        var bytes = new byte[codeVerifierLength];
+        rng.GetBytes(bytes);
+        return Convert.ToBase64String(bytes)
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
+    }
+
+    public static string GenerateCodeChallenge(string codeVerifier)
+    {
+        using var sha256 = SHA256.Create();
+        var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        return Convert.ToBase64String(challengeBytes)
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
+    }
+
     public async Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default)
     {
         var authToken = await ClaimCode(code, codeVerifier, cancellationToken);
@@ -74,14 +119,14 @@ public class HealthFormsApiHttpClient
     {
         var authTokenResponse = await _httpClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest
         {
-            Address = _options.HostAddressAuth,
+            Address = $"{_options.HostAddressAuth}connect/token",
             ClientId = _options.ClientId,
             ClientSecret = _options.ClientSecret,
             Code = code,
             RedirectUri = _options.RedirectUrl,
 
             // optional PKCE parameter
-            CodeVerifier = codeVerifier
+            CodeVerifier = codeVerifier, ClientCredentialStyle = ClientCredentialStyle.PostBody
         }, cancellationToken: cancellationToken);
 
         if (!authTokenResponse.IsError)

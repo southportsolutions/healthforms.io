@@ -11,7 +11,7 @@ public class HealthFormsException : Exception
 }
 public class HealthFormsAuthException : HealthFormsException
 {
-    public AuthResponse Response { get; }
+    public TokenResponse Response { get; }
 
     public HealthFormsAuthException(string message, TokenResponse response) : base(message)
     {
