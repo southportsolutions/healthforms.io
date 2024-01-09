@@ -4,10 +4,10 @@ using HealthForms.Api.Errors;
 using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using HealthForms.Api.Core.Models;
 using IdentityModel;
 using System.Security.Cryptography;
 using System.Text;
+using HealthForms.Api.Core.Models.Auth;
 
 namespace HealthForms.Api.Clients;
 
@@ -66,8 +66,10 @@ public class HealthFormsApiHttpClient
 
     #region Claim Code
 
-    public AuthRedirect GetRedirectUrl()
+    public AuthRedirect GetRedirectUrl(string tenantId)
     {
+        if (tenantId == null) throw new ArgumentNullException(nameof(tenantId));
+
         var codeVerifier = GenerateCodeVerifier();
         var codeChallenge = GenerateCodeChallenge(codeVerifier);
 
@@ -75,7 +77,7 @@ public class HealthFormsApiHttpClient
             .CreateAuthorizeUrl(
                 clientId: _options.ClientId,
                 responseType: OidcConstants.ResponseTypes.Code,
-                scope: _options.Scopes,
+                scope: _options.Scopes.Replace("{{tenantId}}", tenantId),
                 redirectUri: _options.RedirectUrl,
                 codeChallenge: codeChallenge,
                 codeChallengeMethod: OidcConstants.CodeChallengeMethods.Sha256,

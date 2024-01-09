@@ -1,8 +1,9 @@
-﻿using IdentityModel.Client;
+﻿using HealthForms.Api.Core.Models.Auth.Interface;
+using IdentityModel.Client;
 
 namespace HealthForms.Api.Clients;
 
-public class AuthResponse
+public class AuthResponse : IAuthResponse
 {
     public AuthResponse(TokenResponse response)
     {
