@@ -7,5 +7,5 @@ public interface ISessionMemberResponse
     string? FirstName { get; set; }
     string? LastName { get; set; }
     string? Status { get; set; }
-    IEnumerable<SessionMemberFormResponse> Forms { get; set; }
+    IEnumerable<ISessionMemberFormResponse> Forms { get; set; }
 }
