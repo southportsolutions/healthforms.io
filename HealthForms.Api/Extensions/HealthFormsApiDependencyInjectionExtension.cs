@@ -13,7 +13,6 @@ public static class HealthFormsApiDependencyInjectionExtension
     public static IServiceCollection AddHealthForms(this IServiceCollection services, IConfigurationSection optionsSection) 
     {
         services.Configure<HealthFormsApiOptions>(optionsSection);
-        services.AddMemoryCache();
         services.AddHttpClient<HealthFormsApiHttpClient>().AddPolicyHandler(GetRetryPolicy());
         
         return services;

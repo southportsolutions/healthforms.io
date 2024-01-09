@@ -6,7 +6,8 @@ namespace HealthForms.Api.Tests;
 
 public static class Startup
 {
-    public static HealthFormsApiOptions Options { get; private set; } = new HealthFormsApiTestOptions();
+    public static HealthFormsApiOptions Options => TestOptions;
+    public static HealthFormsApiTestOptions TestOptions { get; private set; } = new();
 
     public static HealthFormsApiOptions GetOptions()
     {
@@ -15,7 +16,7 @@ public static class Startup
             .AddJsonFile(Path.Combine((new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent)?.ToString() ?? string.Empty, "appsettings.json"), true)
             .AddEnvironmentVariables();
         var config = configurationBuilder.Build();
-        Options = new HealthFormsApiTestOptions();
+        TestOptions = new HealthFormsApiTestOptions();
         var section = config.GetSection(HealthFormsApiOptions.Key);
         section.Bind(Options);
 
