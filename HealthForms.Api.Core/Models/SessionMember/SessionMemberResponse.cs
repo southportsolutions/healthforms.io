@@ -9,5 +9,5 @@ public class SessionMemberResponse : ISessionMemberResponse
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Status { get; set; }
-    public IEnumerable<SessionMemberFormResponse> Forms { get; set; } = new List<SessionMemberFormResponse>();
+    public IEnumerable<ISessionMemberFormResponse> Forms { get; set; } = new List<SessionMemberFormResponse>();
 }

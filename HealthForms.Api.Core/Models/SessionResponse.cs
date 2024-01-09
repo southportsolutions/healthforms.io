@@ -10,5 +10,5 @@ public class SessionResponse : ISessionResponse
     public string SupportEmailAddress { get; set; } = "";
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public List<FormResponse> Forms { get; set; } = new();
+    public List<IFormResponse> Forms { get; set; } = new();
 }

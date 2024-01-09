@@ -5,5 +5,5 @@ namespace HealthForms.Api.Core.Models.SessionMember.Interfaces;
 public interface IAddSessionMemberErrorResponse
 {
     string? Error { get; set; }
-    AddSessionMemberRequest? Member { get; set; }
+    IAddSessionMemberRequest? Member { get; set; }
 }

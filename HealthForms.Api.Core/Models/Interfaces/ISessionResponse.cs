@@ -8,5 +8,5 @@ public interface ISessionResponse
     string SupportEmailAddress { get; set; }
     DateTime StartDate { get; set; }
     DateTime EndDate { get; set; }
-    List<FormResponse> Forms { get; set; }
+    List<IFormResponse> Forms { get; set; }
 }
