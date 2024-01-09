@@ -19,7 +19,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.1.6</Version>
-    <PackageIcon>iconLarge.png</PackageIcon>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
 
@@ -33,12 +33,12 @@
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="iconLarge.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HealthForms.Api.Core\HealthForms.Api.Core.csproj" />
