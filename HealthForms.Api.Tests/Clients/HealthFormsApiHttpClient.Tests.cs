@@ -31,7 +31,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetRequestUri()
     {
-        var redirectUrl = ClassUnderTest.GetRedirectUrl();
+        //"customer:"
+        var redirectUrl = ClassUnderTest.GetRedirectUrl("oALPOYAnIQ");
         Assert.Contains(HealthFormsApiOptions.ClientId, redirectUrl.Uri);
         Assert.Contains(HealthFormsApiOptions.RedirectUrl, redirectUrl.Uri);
     }
@@ -40,8 +41,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         //var httpClient = new HttpClient();
         //var client = new HealthFormsApiHttpClient(httpClient, Microsoft.Extensions.Options.Options.Create(HealthFormsApiOptions), new MemoryCache(), new NullLogger<HealthFormsApiHttpClient>());
-        var response = await ClassUnderTest.GetTenantToken("6EF8CE38A1C83566CFF1D9D8AEA3F26C473BE7322433C621193DF87C47453350-1", "WxY78-mP3KV2tc7NQVu4126Pn-IEWxsf4HF_ppdip9bWzFnjDCILQe0-JSs4Bpy0JModsKNnjO6zW-tckJ3WTg");
-        //Assert.NotNull(response);
+        var response = await ClassUnderTest.GetTenantToken("B776BD535431D57433C4C254EB80AC93902589503E0C929B289CC24CA4BBBE10-1", "Ww_Buz5Lmr_gpE0u8SeappD1IOJDdgS9hLH9TOX5zh_FpOU5_pxOxzS32ANtYlHhrosIqbYNTb8tw9UQ2FG9ag");
+        Assert.NotNull(response);
         //Assert.NotNull(response.AccessToken);
         //Assert.NotNull(response.TokenType);
         //Assert.NotNull(response.ExpiresIn);
