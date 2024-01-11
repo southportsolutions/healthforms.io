@@ -1,9 +1,6 @@
-﻿using HealthForms.Api.Core.Models.SessionMember.Interfaces;
+﻿namespace HealthForms.Api.Core.Models.SessionMember;
 
-namespace HealthForms.Api.Core.Models.SessionMember;
-
-public class AddSessionMemberBulk : IAddSessionMemberBulk
+public class AddSessionMemberBulk
 {
-    public IEnumerable<IAddSessionMemberResponse> AddedMembers { get; set; } = new List<AddSessionMemberResponse>();
-    public IEnumerable<IAddSessionMemberErrorResponse> Errors { get; set; } = new List<AddSessionMemberErrorResponse>();
+    public string Id { get; set; }
 }
