@@ -11,7 +11,6 @@ using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
 using HealthForms.Api.Core.Models.SessionMember;
-using HealthForms.Api.Core.Models.SessionMember.Interfaces;
 using HealthForms.Api.Shared;
 
 namespace HealthForms.Api.Clients;
@@ -201,16 +200,16 @@ public class HealthFormsApiHttpClient
 
     #region Add SessionMember
 
-    public async Task<IAddSessionMemberResponse> AddSessionMember(string tenantToken, string tenantId, string sessionId, IAddSessionMemberRequest data, CancellationToken cancellationToken = default)
+    public async Task<AddSessionMemberResponse> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
 
-        return await PostJsonAsync<IAddSessionMemberRequest, AddSessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
+        return await PostJsonAsync<AddSessionMemberRequest, AddSessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
     }
 
-    public async Task<IAddSessionMemberBulk> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default)
+    public async Task<AddSessionMemberBulk> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
