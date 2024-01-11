@@ -5,7 +5,7 @@ namespace HealthForms.Api.Core.Models.SessionMember
     public class AddSessionMemberRequest : IAddSessionMemberRequest
     {
         public string? ExternalMemberId { get; set; }
-        public string ExternalAttendeeId { get; set; } = string.Empty;
+        public string? ExternalAttendeeId { get; set; }
         public string? Group { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
