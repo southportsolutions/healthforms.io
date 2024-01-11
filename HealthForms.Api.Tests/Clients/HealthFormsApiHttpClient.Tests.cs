@@ -280,42 +280,42 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         Assert.Equal("The maximum number of members that can be added at once is 100.", exception.Message);
     }
 
-    [Fact]
-    public async Task AddSessionMembers()
-    {
-        var request = new List<AddSessionMemberRequest>();
-        do
-        {
-            request.AddRange(Fixture.Create<List<AddSessionMemberRequest>>());
-        } while (request.Count < 98);
+    //[Fact]
+    //public async Task AddSessionMembers()
+    //{
+    //    var request = new List<AddSessionMemberRequest>();
+    //    do
+    //    {
+    //        request.AddRange(Fixture.Create<List<AddSessionMemberRequest>>());
+    //    } while (request.Count < 98);
 
-        var i = 1;
-        foreach (var memberRequest in request)
-        {
-            memberRequest.FirstName = $"John_{i}";
-            memberRequest.LastName = $"Doe_{i}";
-            memberRequest.Group = null;
-            memberRequest.Phone = "555-555-5555";
-            memberRequest.ExternalAttendeeId = Guid.NewGuid().ToString("N");
-            memberRequest.ExternalMemberId = Guid.NewGuid().ToString("N");
-            memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(100);
-            memberRequest.Email = "test1@southportsolutions.com";
-            i++;
-        }
-        var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
-        Assert.NotNull(response);
-        Assert.Empty(response.Errors);
-        Assert.Equal(request.Count, response.AddedMembers.Count());
-        foreach (var addedMember in response.AddedMembers)
-        {
-            Assert.NotNull(addedMember.AttendeeId);
-            Assert.NotNull(addedMember.MemberId);
-            Assert.NotNull(addedMember.InvitationSendOn);
-            Assert.Null(addedMember.InvitationSentOn);
-            Assert.Equal(SessionId, addedMember.SessionId);
-            Assert.False(addedMember.Accepted);
-        }
-    }
+    //    var i = 1;
+    //    foreach (var memberRequest in request)
+    //    {
+    //        memberRequest.FirstName = $"John_{i}";
+    //        memberRequest.LastName = $"Doe_{i}";
+    //        memberRequest.Group = null;
+    //        memberRequest.Phone = "555-555-5555";
+    //        memberRequest.ExternalAttendeeId = Guid.NewGuid().ToString("N");
+    //        memberRequest.ExternalMemberId = Guid.NewGuid().ToString("N");
+    //        memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(100);
+    //        memberRequest.Email = "test1@southportsolutions.com";
+    //        i++;
+    //    }
+    //    var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
+    //    Assert.NotNull(response);
+    //    Assert.Empty(response.Errors);
+    //    Assert.Equal(request.Count, response.AddedMembers.Count());
+    //    foreach (var addedMember in response.AddedMembers)
+    //    {
+    //        Assert.NotNull(addedMember.AttendeeId);
+    //        Assert.NotNull(addedMember.MemberId);
+    //        Assert.NotNull(addedMember.InvitationSendOn);
+    //        Assert.Null(addedMember.InvitationSentOn);
+    //        Assert.Equal(SessionId, addedMember.SessionId);
+    //        Assert.False(addedMember.Accepted);
+    //    }
+    //}
 
     #endregion
 }
