@@ -22,8 +22,11 @@ public static class Startup
 
         if (string.IsNullOrWhiteSpace(Options.ClientId))
         {
-            Options.ClientId = Environment.GetEnvironmentVariable("HFPCLIENTID") ?? throw new InvalidOperationException();
-            Options.ClientSecret = Environment.GetEnvironmentVariable("HFPCLIENTSECRET") ?? throw new InvalidOperationException();
+            TestOptions.ClientId = Environment.GetEnvironmentVariable("HFPCLIENTID") ?? throw new InvalidOperationException();
+            TestOptions.ClientSecret = Environment.GetEnvironmentVariable("HFPCLIENTSECRET") ?? throw new InvalidOperationException();
+            TestOptions.TenantToken = Environment.GetEnvironmentVariable("HFTENANTTOKEN") ?? throw new InvalidOperationException();
+            TestOptions.TenantId = Environment.GetEnvironmentVariable("HFTENANTID") ?? throw new InvalidOperationException();
+            TestOptions.SessionId = Environment.GetEnvironmentVariable("HFSESSIONID") ?? throw new InvalidOperationException();
         }
 
         if (string.IsNullOrEmpty(Options.ClientId))
