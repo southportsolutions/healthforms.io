@@ -1,8 +1,6 @@
-﻿using HealthForms.Api.Core.Models.SessionMember.Interfaces;
+﻿namespace HealthForms.Api.Core.Models.SessionMember;
 
-namespace HealthForms.Api.Core.Models.SessionMember;
-
-public class SessionMemberFormResponse : ISessionMemberFormResponse
+public class SessionMemberFormResponse
 {
     public string? FormId { get; set; }
     public string? FormName { get; set; }

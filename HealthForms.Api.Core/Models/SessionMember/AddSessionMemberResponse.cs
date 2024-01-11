@@ -1,8 +1,6 @@
-﻿using HealthForms.Api.Core.Models.SessionMember.Interfaces;
+﻿namespace HealthForms.Api.Core.Models.SessionMember;
 
-namespace HealthForms.Api.Core.Models.SessionMember;
-
-public class AddSessionMemberResponse : IAddSessionMemberResponse
+public class AddSessionMemberResponse
 {
     public string? AttendeeId { get; set; }
     public string? MemberId { get; set; }
