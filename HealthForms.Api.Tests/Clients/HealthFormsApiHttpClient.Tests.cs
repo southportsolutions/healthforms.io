@@ -15,7 +15,6 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     private string SessionId => Startup.TestOptions.SessionId;
     private string TenantId => Startup.TestOptions.TenantId;
     private string TenantToken => Startup.TestOptions.TenantToken;
-    private string AttendeeId => Startup.TestOptions.AttendeeId;
 
     public HealthFormsApiHttpClientTests(ITestOutputHelper testLogger)
     {
