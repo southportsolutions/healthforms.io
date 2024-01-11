@@ -118,8 +118,24 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetSessionMembers_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId));
-        Assert.Equal("tenantToken", exception.ParamName);
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessionMembers(TenantToken, "123456789a", SessionId));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetSessionMembers()
+    {
+        var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId);
+        Assert.NotNull(response);
+        Assert.NotEmpty(response.Data);
+    }
+
+    [Fact]
+    public async Task GetSessionMembers_ExtraPage()
+    {
+        var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId, 2);
+        Assert.NotNull(response);
+        Assert.Empty(response.Data);
     }
 
     #endregion
@@ -195,7 +211,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
     #endregion
 
-    #region Add Session Member
+    #region Add Session Members  (Bulk)
 
     [Fact]
     public async Task AddSessionMembers_MissingTenantToken()
@@ -267,11 +283,24 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task AddSessionMembers()
     {
-        var request = Fixture.Create<List<AddSessionMemberRequest>>();
+        var request = new List<AddSessionMemberRequest>();
+        do
+        {
+            request.AddRange(Fixture.Create<List<AddSessionMemberRequest>>());
+        } while (request.Count < 98);
+
+        var i = 1;
         foreach (var memberRequest in request)
         {
-            memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(1);
+            memberRequest.FirstName = $"John_{i}";
+            memberRequest.LastName = $"Doe_{i}";
+            memberRequest.Group = null;
+            memberRequest.Phone = "555-555-5555";
+            memberRequest.ExternalAttendeeId = Guid.NewGuid().ToString("N");
+            memberRequest.ExternalMemberId = Guid.NewGuid().ToString("N");
+            memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(100);
             memberRequest.Email = "test1@southportsolutions.com";
+            i++;
         }
         var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
         Assert.NotNull(response);
