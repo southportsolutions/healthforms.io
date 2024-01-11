@@ -1,6 +1,6 @@
 ﻿namespace HealthForms.Api.Core.Models.SessionMember;
 
-public class AddSessionMemberBulk
+public class AddSessionMemberBulkStartResponse
 {
     public string Id { get; set; }
 }
