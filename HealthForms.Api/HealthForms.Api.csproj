@@ -15,10 +15,9 @@
     <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>HealthForms</PackageTags>
-    <PackageReleaseNotes>Added Events and Person API types.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.1.6</Version>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
