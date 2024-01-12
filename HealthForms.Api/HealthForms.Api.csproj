@@ -17,7 +17,7 @@
     <PackageTags>HealthForms</PackageTags>
     <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
