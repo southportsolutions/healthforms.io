@@ -127,12 +127,20 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId);
         Assert.NotNull(response);
         Assert.NotEmpty(response.Data);
+        Assert.NotNull(response.Next);
+
+
+        response = await ClassUnderTest.GetSessionMembers(TenantToken, response.Next);
+        Assert.NotNull(response);
+        Assert.NotEmpty(response.Data);
+
+
     }
 
     [Fact]
     public async Task GetSessionMembers_ExtraPage()
     {
-        var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId, 2);
+        var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId, 100);
         Assert.NotNull(response);
         Assert.Empty(response.Data);
     }
@@ -243,7 +251,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request[0].FirstName = "";
         var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
         Assert.Contains("3000", exception.Message);
-        Assert.True(exception.Error.ValidationErrors.Any(c => c.Field == "FirstName"));
+        Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "FirstName");
     }
 
     [Fact]
@@ -253,7 +261,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request[0].LastName = "";
         var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
         Assert.Contains("3000", exception.Message);
-        Assert.True(exception.Error.ValidationErrors.Any(c => c.Field == "LastName"));
+        Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "LastName");
     }
 
     [Fact]
@@ -263,58 +271,203 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request[0].Email = "";
         var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
         Assert.Contains("3000", exception.Message);
-        Assert.True(exception.Error.ValidationErrors.Any(c => c.Field == "Email"));
+        Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "Email");
     }
 
     [Fact]
-    public async Task AddSessionMembers_MoreThan100()
+    public async Task AddSessionMembers_MoreThan1000()
     {
         var request = new List<AddSessionMemberRequest>();
         do
         {
             request.AddRange(Fixture.Create<List<AddSessionMemberRequest>>());
-        } while(request.Count < 101);
+        } while(request.Count < 1001);
 
         var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
-        Assert.Equal("The maximum number of members that can be added at once is 100.", exception.Message);
+        Assert.Equal("The maximum number of members that can be added at once is 1000.", exception.Message);
     }
 
-    //[Fact]
-    //public async Task AddSessionMembers()
-    //{
-    //    var request = new List<AddSessionMemberRequest>();
-    //    do
-    //    {
-    //        request.AddRange(Fixture.Create<List<AddSessionMemberRequest>>());
-    //    } while (request.Count < 98);
+    [Fact]
+    public async Task AddSessionMembers()
+    {
+        var request = Fixture.Create<List<AddSessionMemberRequest>>();
 
-    //    var i = 1;
-    //    foreach (var memberRequest in request)
-    //    {
-    //        memberRequest.FirstName = $"John_{i}";
-    //        memberRequest.LastName = $"Doe_{i}";
-    //        memberRequest.Group = null;
-    //        memberRequest.Phone = "555-555-5555";
-    //        memberRequest.ExternalAttendeeId = Guid.NewGuid().ToString("N");
-    //        memberRequest.ExternalMemberId = Guid.NewGuid().ToString("N");
-    //        memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(100);
-    //        memberRequest.Email = "test1@southportsolutions.com";
-    //        i++;
-    //    }
-    //    var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
-    //    Assert.NotNull(response);
-    //    Assert.Empty(response.Errors);
-    //    Assert.Equal(request.Count, response.AddedMembers.Count());
-    //    foreach (var addedMember in response.AddedMembers)
-    //    {
-    //        Assert.NotNull(addedMember.AttendeeId);
-    //        Assert.NotNull(addedMember.MemberId);
-    //        Assert.NotNull(addedMember.InvitationSendOn);
-    //        Assert.Null(addedMember.InvitationSentOn);
-    //        Assert.Equal(SessionId, addedMember.SessionId);
-    //        Assert.False(addedMember.Accepted);
-    //    }
-    //}
+        var i = 1;
+        foreach (var memberRequest in request)
+        {
+            memberRequest.FirstName = $"John_{i}";
+            memberRequest.LastName = $"Doe_{i}";
+            memberRequest.Group = null;
+            memberRequest.Phone = "555-555-5555";
+            memberRequest.ExternalAttendeeId = Guid.NewGuid().ToString("N");
+            memberRequest.ExternalMemberId = Guid.NewGuid().ToString("N");
+            memberRequest.SendInvitationOn = DateTime.UtcNow.AddDays(100);
+            memberRequest.Email = "test1@southportsolutions.com";
+            i++;
+        }
+        var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
+        Assert.NotNull(response);
+        Assert.NotNull(response.Id);
+
+        AddSessionMemberBulkResponse status;
+        do
+        {
+            status = await ClassUnderTest.GetAddSessionMembersStatus(TenantToken, TenantId, SessionId, response.Id);
+            await Task.Delay(1000);
+
+        } while(status.PercentComplete < 1);
+
+        Assert.Equal("Finished importing rows", status.StatusMessage);
+        Assert.NotNull(status.StatusMessage);
+        Assert.Equal(3, status.CountAdded);
+        //Assert.Equal(3, status.CountTotal);
+        Assert.Equal(0, status.CountSkipped);
+        Assert.False(status.HasErrors);
+        Assert.Equal(1, status.PercentComplete);
+        Assert.NotNull(status.Results);
+        Assert.NotEmpty(status.Results);
+        Assert.Equal(3, status.Results.Count);
+    }
+
+    #endregion
+
+    #region Delete Session Members
+    
+    [Fact]
+    public async Task DeleteSessionMember_MissingTenantToken()
+    {
+        var request = Fixture.Create<AddSessionMemberRequest>();
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMember("", TenantId, SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMember_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMember(TenantToken, "", SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMember_MissingSessionId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, "", Guid.NewGuid().ToString("N")));
+        Assert.Equal("sessionId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMember_MissingMissingSessionMemberId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, ""));
+        Assert.Equal("sessionMemberId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMember_InvalidId()
+    {
+        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, "123456789a"));
+    }
+
+    [Fact]
+    public async Task DeleteSessionMember()
+    {
+        var request = Fixture.Create<AddSessionMemberRequest>();
+        request.Email = "test1@southportsolutions.com";
+        var response = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+
+        var isSuccessful = await ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, response.AttendeeId);
+        Assert.True(isSuccessful);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId("", TenantId, SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, "", SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId_MissingSessionId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, "", Guid.NewGuid().ToString("N")));
+        Assert.Equal("sessionId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId_MissingMissingId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, ""));
+        Assert.Equal("externalAttendeeId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId_InvalidId()
+    {
+        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, "123456789a"));
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalAttendeeId()
+    {
+        var request = Fixture.Create<AddSessionMemberRequest>();
+        request.Email = "test1@southportsolutions.com";
+        var response = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+
+        var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, request.ExternalAttendeeId);
+        Assert.True(isSuccessful);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalId("", TenantId, SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, "", SessionId, Guid.NewGuid().ToString("N")));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId_MissingSessionId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, "", Guid.NewGuid().ToString("N")));
+        Assert.Equal("sessionId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId_MissingId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, ""));
+        Assert.Contains("externalMemberId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId_InvalidId()
+    {
+        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, "123456789a"));
+    }
+
+    [Fact]
+    public async Task DeleteSessionMemberByExternalId()
+    {
+        var request = Fixture.Create<AddSessionMemberRequest>();
+        request.Email = "test1@southportsolutions.com";
+        await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+
+        var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, request.ExternalMemberId);
+        Assert.True(isSuccessful);
+    }
 
     #endregion
 }

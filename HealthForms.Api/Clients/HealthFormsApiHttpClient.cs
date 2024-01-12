@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using HealthForms.Api.Options;
 using Microsoft.Extensions.Options;
 using HealthForms.Api.Errors;
@@ -15,7 +16,7 @@ using HealthForms.Api.Shared;
 
 namespace HealthForms.Api.Clients;
 
-public class HealthFormsApiHttpClient
+public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 {
     private ILogger<HealthFormsApiHttpClient> Log { get; }
     private readonly HttpClient _httpClient;
@@ -214,43 +215,53 @@ public class HealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
-        if (data.Count > 100) throw new HealthFormsException("The maximum number of members that can be added at once is 100.");
+        if (data.Count > 1000) throw new HealthFormsException("The maximum number of members that can be added at once is 1000.");
 
         return await PostJsonAsync<List<AddSessionMemberRequest>, AddSessionMemberBulkStartResponse>($"v1/{tenantId}/sessions/{sessionId}/members/bulk", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<AddSessionMemberBulkResponse> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(bulkId)) throw new ArgumentNullException(nameof(bulkId));
+
+        return await GetAsync<AddSessionMemberBulkResponse>($"v1/{tenantId}/sessions/{sessionId}/members/bulk/{bulkId}", tenantToken, cancellationToken);
     }
 
     #endregion
 
     #region Delete SessionMembers
 
-    public async Task DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(sessionMemberId)) throw new ArgumentNullException(nameof(sessionMemberId));
 
-        await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalMemberId)) throw new ArgumentNullException(nameof(externalMemberId));
 
-        await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalAttendeeId)) throw new ArgumentNullException(nameof(externalAttendeeId));
 
-        await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
     }
 
     #endregion
@@ -310,10 +321,10 @@ public class HealthFormsApiHttpClient
 
     #region Delete
 
-    protected async Task DeleteAsync(string route, string tenantToken, CancellationToken cancellationToken = default)
+    protected async Task<bool> DeleteAsync(string route, string tenantToken, CancellationToken cancellationToken = default)
     {
         var accessToken = await GetAccessToken(tenantToken);
-        _httpClient.SetBearerToken(accessToken.AccessToken);
+            _httpClient.SetBearerToken(accessToken.AccessToken);
 
         var response = await _httpClient.DeleteAsync($"{_options.HostAddressApi}{route}", cancellationToken);
         if (!response.IsSuccessStatusCode)
@@ -323,6 +334,8 @@ public class HealthFormsApiHttpClient
             throw new HealthFormsException($"The Delete request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
 
         }
+
+        return response.IsSuccessStatusCode;
     }
 
     #endregion
@@ -333,7 +346,12 @@ public class HealthFormsApiHttpClient
     {
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var errorResponse = await response.Content.ReadFromJsonAsync<HealthFormsErrorResponse>();
+        HealthFormsErrorResponse? errorResponse = null;
+        if (response.StatusCode != HttpStatusCode.NotFound)
+        {
+            errorResponse = await response.Content.ReadFromJsonAsync<HealthFormsErrorResponse>();
+        }
+
         if (errorResponse != null)
         {
             Log.LogError($"HealthForms Request Error at: {response.RequestMessage?.RequestUri?.ToString() ?? "Unknown HealthForms Request Address"} Response: {responseString}");
