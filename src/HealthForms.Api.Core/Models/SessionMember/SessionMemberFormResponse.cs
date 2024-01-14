@@ -6,4 +6,5 @@ public class SessionMemberFormResponse
     public string? FormName { get; set; }
     public string? FormStatus { get; set; }
     public bool IsComplete { get; set; }
+    public bool IsRequired { get; set; }
 }

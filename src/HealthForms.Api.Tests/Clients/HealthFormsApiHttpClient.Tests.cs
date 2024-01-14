@@ -127,10 +127,10 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId);
         Assert.NotNull(response);
         Assert.NotEmpty(response.Data);
-        Assert.NotNull(response.Next);
+        Assert.NotNull(response.NextUri);
 
 
-        response = await ClassUnderTest.GetSessionMembers(TenantToken, response.Next);
+        response = await ClassUnderTest.GetSessionMembers(TenantToken, response.NextUri);
         Assert.NotNull(response);
         Assert.NotEmpty(response.Data);
 
@@ -320,7 +320,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         Assert.Equal("Finished importing rows", status.StatusMessage);
         Assert.NotNull(status.StatusMessage);
         Assert.Equal(3, status.CountAdded);
-        //Assert.Equal(3, status.CountTotal);
+        Assert.Equal(3, status.CountTotal);
         Assert.Equal(0, status.CountSkipped);
         Assert.False(status.HasErrors);
         Assert.Equal(1, status.PercentComplete);
@@ -336,7 +336,6 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteSessionMember_MissingTenantToken()
     {
-        var request = Fixture.Create<AddSessionMemberRequest>();
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteSessionMember("", TenantId, SessionId, Guid.NewGuid().ToString("N")));
         Assert.Equal("tenantToken", exception.ParamName);
     }
@@ -418,7 +417,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<AddSessionMemberRequest>();
         request.Email = "test1@southportsolutions.com";
-        var response = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+        await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
 
         var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, request.ExternalAttendeeId);
         Assert.True(isSuccessful);

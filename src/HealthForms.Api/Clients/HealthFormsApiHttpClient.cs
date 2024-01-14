@@ -12,6 +12,7 @@ using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
 using HealthForms.Api.Core.Models.SessionMember;
+using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Shared;
 
 namespace HealthForms.Api.Clients;
@@ -151,6 +152,45 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #endregion
 
+    #region Get Sessions
+    
+    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, string sessionId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
+
+        return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions/{sessionId}?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
+    }
+
+    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
+
+        return await GetAsync<PagedResponse<List<SessionResponse>>>(nextUri, tenantToken, cancellationToken);
+    }
+    
+    public async Task<SessionResponse> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        return await GetAsync<SessionResponse>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
+    }
+
+    public async Task<SessionSelectResponse> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+
+        return await GetAsync<SessionSelectResponse>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
     #region Get SessionMembers
 
     public async Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default)
@@ -163,12 +203,12 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionMemberResponse>>>($"v1/{tenantId}/sessions/{sessionId}/members?page={page}", tenantToken, cancellationToken);
     }
 
-    public async Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string nextRoute, CancellationToken cancellationToken = default)
+    public async Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
-        if (string.IsNullOrWhiteSpace(nextRoute)) throw new ArgumentNullException(nameof(nextRoute));
+        if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
 
-        return await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextRoute, tenantToken, cancellationToken);
+        return await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextUri, tenantToken, cancellationToken);
     }
 
     public async Task<SessionMemberResponse> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)

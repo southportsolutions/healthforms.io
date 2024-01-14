@@ -1,8 +1,6 @@
-﻿using HealthForms.Api.Core.Models.Interfaces;
+﻿namespace HealthForms.Api.Core.Models.Sessions;
 
-namespace HealthForms.Api.Core.Models;
-
-public class FormResponse : IFormResponse
+public class SessionFormResponse
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";

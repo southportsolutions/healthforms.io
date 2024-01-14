@@ -1,14 +1,13 @@
-﻿using HealthForms.Api.Core.Models.Interfaces;
+﻿namespace HealthForms.Api.Core.Models.Sessions;
 
-namespace HealthForms.Api.Core.Models;
-
-public class SessionResponse : ISessionResponse
+public class SessionResponse
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";
     public string? Description { get; set; } = "";
     public string SupportEmailAddress { get; set; } = "";
+    public DateTime? SendInvitationsOn { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public List<IFormResponse> Forms { get; set; } = new();
+    public List<SessionFormResponse> Forms { get; set; } = new();
 }
