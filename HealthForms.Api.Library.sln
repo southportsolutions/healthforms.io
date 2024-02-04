@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8D3706F7-1B47-4DFB-857E-7253A3DF95FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{28AD6920-79FF-4634-B301-24ED4FA55CEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{AF9B50E2-D4AE-4D62-A1A9-407FCA20DF46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthForms.Api.Core", "src/HealthForms.Api.Core\HealthForms.Api.Core.csproj", "{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthForms.Api.Tests", "src/HealthForms.Api.Tests\HealthForms.Api.Tests.csproj", "{B1276118-AFAA-4F0E-BC1C-0B134722D999}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthForms.Api", "src/HealthForms.Api\HealthForms.Api.csproj", "{10A462EC-751B-453D-A867-A1A0CEE7FC7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthForms.Api.Sample.FullFramework", "samples\HealthForms.Api.Sample.FullFramework\HealthForms.Api.Sample.FullFramework.csproj", "{4FED8398-ECDD-4D7F-9F18-6616341F1B30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1276118-AFAA-4F0E-BC1C-0B134722D999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1276118-AFAA-4F0E-BC1C-0B134722D999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1276118-AFAA-4F0E-BC1C-0B134722D999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1276118-AFAA-4F0E-BC1C-0B134722D999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A462EC-751B-453D-A867-A1A0CEE7FC7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A462EC-751B-453D-A867-A1A0CEE7FC7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A462EC-751B-453D-A867-A1A0CEE7FC7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A462EC-751B-453D-A867-A1A0CEE7FC7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FED8398-ECDD-4D7F-9F18-6616341F1B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FED8398-ECDD-4D7F-9F18-6616341F1B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FED8398-ECDD-4D7F-9F18-6616341F1B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FED8398-ECDD-4D7F-9F18-6616341F1B30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8DF1F2A7-EF6B-4F86-84C5-B6ACADCC0584} = {28AD6920-79FF-4634-B301-24ED4FA55CEE}
+		{B1276118-AFAA-4F0E-BC1C-0B134722D999} = {28AD6920-79FF-4634-B301-24ED4FA55CEE}
+		{10A462EC-751B-453D-A867-A1A0CEE7FC7F} = {28AD6920-79FF-4634-B301-24ED4FA55CEE}
+		{4FED8398-ECDD-4D7F-9F18-6616341F1B30} = {AF9B50E2-D4AE-4D62-A1A9-407FCA20DF46}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3226BDDA-7B21-4751-A3C7-1DF617759495}
+	EndGlobalSection
+EndGlobal
