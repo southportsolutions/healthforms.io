@@ -13,14 +13,12 @@ public interface IHealthFormsApiHttpClient
     Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default);
     Task<TokenResponse> ClaimCode(string code, string codeVerifier, CancellationToken cancellationToken = default);
 
-    Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, string sessionId,DateTime startDate, 
+    Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, 
         int page = 1, CancellationToken cancellationToken = default);
-    Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string nextUri,
-        CancellationToken cancellationToken = default);
+    Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default);
     Task<SessionResponse> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default);
 
-    Task<SessionSelectResponse> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate,
-        CancellationToken cancellationToken = default);
+    Task<IEnumerable<SessionSelectResponse>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default);
     
     Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default);
     Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default);

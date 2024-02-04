@@ -68,14 +68,14 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     }
 
     //Used only when manually running tests. 
-    [Fact]
-    public async Task GetInitialToken()
-    {
-        var code = "75BF86CC3D65277EB08B14F5693A2687DF4F6570FFA7AC5A5C303E5102E71154-1";
-        var codeVerifier = "Eui3Dhpv9ctQAEn9_sOOzbzHXpaHDNXxLOHrrG2t1GGQ_C9p_-cYGGSJnL94DaZcRk6bTfZ6QXK0XMArdEiCbA";
-        var response = await ClassUnderTest.GetTenantToken(code, codeVerifier);
-        Assert.NotNull(response);
-    }
+    //[Fact]
+    //public async Task GetInitialToken()
+    //{
+    //    var code = "75BF86CC3D65277EB08B14F5693A2687DF4F6570FFA7AC5A5C303E5102E71154-1";
+    //    var codeVerifier = "Eui3Dhpv9ctQAEn9_sOOzbzHXpaHDNXxLOHrrG2t1GGQ_C9p_-cYGGSJnL94DaZcRk6bTfZ6QXK0XMArdEiCbA";
+    //    var response = await ClassUnderTest.GetTenantToken(code, codeVerifier);
+    //    Assert.NotNull(response);
+    //}
 
     #endregion
 
@@ -91,7 +91,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
     #endregion
 
-    #region Get Session Member
+    #region Get Session Members
 
     [Fact]
     public async Task GetSessionMembers_MissingTenantToken()
@@ -466,6 +466,104 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
         var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, request.ExternalMemberId);
         Assert.True(isSuccessful);
+    }
+
+    #endregion
+
+    #region Get Sessions
+
+    [Fact]
+    public async Task GetSessions_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSessions("", TenantId, DateTime.MinValue));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSessions_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSessions(TenantToken, "", DateTime.MinValue));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSessions_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessions(TenantToken, "123456789a", DateTime.MinValue));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetSessions()
+    {
+        var response = await ClassUnderTest.GetSessions(TenantToken, TenantId, DateTime.MinValue);
+        Assert.NotNull(response);
+        Assert.NotEmpty(response.Data);
+        Assert.Null(response.NextUri);
+    }
+
+    #endregion
+
+    #region Get Sessions
+
+    [Fact]
+    public async Task GetSession_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSession("", TenantId, "lt28Hvo3kg"));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSession_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSession(TenantToken, "", "lt28Hvo3kg"));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSession_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSession(TenantToken, "123456789a", "lt28Hvo3kg"));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetSession()
+    {
+        var response = await ClassUnderTest.GetSession(TenantToken, TenantId, "lt28Hvo3kg");
+        Assert.NotNull(response);
+    }
+
+    #endregion
+
+    #region Get Session Select Items
+
+    [Fact]
+    public async Task GetSessionSelectList_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSessionSelectList("", TenantId, DateTime.MinValue));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSessionSelectList_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetSessionSelectList(TenantToken, "", DateTime.MinValue));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetSessionSelectList_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessionSelectList(TenantToken, "123456789a", DateTime.MinValue));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetSessionSelectList()
+    {
+        var response = await ClassUnderTest.GetSessionSelectList(TenantToken, TenantId, DateTime.MinValue);
+        Assert.NotNull(response);
     }
 
     #endregion
