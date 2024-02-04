@@ -9,5 +9,5 @@ public class SessionResponse
     public DateTime? SendInvitationsOn { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public List<SessionFormResponse> Forms { get; set; } = new();
+    public IEnumerable<SessionFormResponse> Forms { get; set; } = new List<SessionFormResponse>();
 }
