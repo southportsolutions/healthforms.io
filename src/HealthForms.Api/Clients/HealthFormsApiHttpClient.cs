@@ -8,12 +8,15 @@ using Microsoft.Extensions.Logging;
 using IdentityModel;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Shared;
+using static IdentityModel.ClaimComparer;
 
 namespace HealthForms.Api.Clients;
 
@@ -154,14 +157,13 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Get Sessions
     
-    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, string sessionId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
-        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
 
-        return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions/{sessionId}?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
+        return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
     }
 
     public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
@@ -181,12 +183,12 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<SessionResponse>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
     }
 
-    public async Task<SessionSelectResponse> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SessionSelectResponse>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
 
-        return await GetAsync<SessionSelectResponse>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+        return await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
     }
 
     #endregion
@@ -326,15 +328,24 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             if (response.StatusCode == HttpStatusCode.NotFound) return null!;
 
             if (responseError != null) throw new HealthFormsException(responseError);
-            throw new HealthFormsException($"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
+            throw new HealthFormsException($"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}");
         }
 
-        var responseData = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken);
-        if (responseData != null) return responseData;
+        try
+        {
+            var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, ReferenceHandler = ReferenceHandler.IgnoreCycles };
+            jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
-        var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
-        Log?.LogError("{message}, Data: {data}", message, await response.Content.ReadAsStringAsync());
-        throw new HealthFormsException($"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.");
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: jsonOptions)
+                   ?? throw new HealthFormsException("Unable deserialize.");
+        }
+        catch (Exception e)
+        {
+            var message = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.";
+            var responseString = await response.Content.ReadAsStringAsync();
+            Log?.LogError("{message}, Data: {data}", message, responseString);
+            throw new HealthFormsException($"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.");
+        }
 
     }
 
@@ -354,12 +365,19 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             if (responseError != null) throw new HealthFormsException(responseError);
             throw new HealthFormsException($"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
         }
-        var responseData = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken);
-        if (responseData != null) return responseData;
 
-        var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
-        Log?.LogError("{message}, Data: {data}", message, await response.Content.ReadAsStringAsync());
-        throw new HealthFormsException($"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.");
+        try
+        {
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken)
+                   ?? throw new HealthFormsException("Unable deserialize.");
+        }
+        catch (Exception e)
+        {
+            var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
+            var responseString = await response.Content.ReadAsStringAsync();
+            Log?.LogError("{message}, Data: {data}", message, responseString);
+            throw new HealthFormsException($"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.");
+        }
 
     }
 
