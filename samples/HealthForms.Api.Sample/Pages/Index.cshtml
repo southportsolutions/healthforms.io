@@ -1,0 +1,15 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Authorize Tenant</h1>
+    <p>Learn more about authorizing a <a href="https://github.com/southportsolutions/healthforms.io">HealthForms.io tenant</a>.</p>
+    
+    <form method="post">
+        <input asp-for="TenantId"/>
+        <button type="submit" class="btn btn-primary">Redirect</button>
+    </form>
+</div>
