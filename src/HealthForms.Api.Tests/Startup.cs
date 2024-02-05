@@ -27,6 +27,7 @@ public static class Startup
             TestOptions.TenantToken = Environment.GetEnvironmentVariable("HFTENANTTOKEN") ?? throw new InvalidOperationException();
             TestOptions.TenantId = Environment.GetEnvironmentVariable("HFTENANTID") ?? throw new InvalidOperationException();
             TestOptions.SessionId = Environment.GetEnvironmentVariable("HFSESSIONID") ?? throw new InvalidOperationException();
+            TestOptions.RedirectUrl = Environment.GetEnvironmentVariable("HDREDIRECTURL") ?? throw new InvalidOperationException();
         }
 
         if (string.IsNullOrEmpty(Options.ClientId))
