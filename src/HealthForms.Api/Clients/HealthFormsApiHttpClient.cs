@@ -327,7 +327,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             var responseError = await LogOnErrorResponse(response);
             if (response.StatusCode == HttpStatusCode.NotFound) return null!;
 
-            if (responseError != null) throw new HealthFormsException($"{responseError.Message}, to: {response.RequestMessage.RequestUri.OriginalString}");
+            if (responseError != null) throw new HealthFormsException(responseError);
             throw new HealthFormsException($"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}");
         }
 
@@ -362,7 +362,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (!response.IsSuccessStatusCode)
         {
             var responseError = await LogOnErrorResponse(response);
-            if (responseError != null) throw new HealthFormsException($"{responseError.Message}, to: {response.RequestMessage.RequestUri.OriginalString}");
+            if (responseError != null) throw new HealthFormsException(responseError);
             throw new HealthFormsException($"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
         }
 
