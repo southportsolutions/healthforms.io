@@ -8,7 +8,7 @@ trigger:
       - 'main'
   paths:
     include:
-      - 'HealthForms.Api.Core'
+      - 'src/HealthForms.Api.Core'
 
 
 variables:

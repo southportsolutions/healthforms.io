@@ -8,7 +8,7 @@ trigger:
       - 'main'
   paths:
     include:
-      - 'HealthForms.Api'
+      - 'src/HealthForms.Api'
 
 variables:
 - template: 'Variables/variables.yml'
