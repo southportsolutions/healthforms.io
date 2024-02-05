@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace HealthForms.Api.Sample.FullFramework
 {
@@ -13,7 +10,7 @@ namespace HealthForms.Api.Sample.FullFramework
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            HttpContext.Current.Response.Redirect("GetCode.aspx", false);
         }
     }
 }

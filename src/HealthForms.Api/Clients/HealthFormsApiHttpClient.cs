@@ -115,6 +115,16 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             .Replace('/', '_');
     }
 
+    public string GetTenantIdFromScope(string scope)
+    {
+        var scopes = scope.Split(' ').ToList();
+        var tenantId = scopes.Find(s => s.StartsWith("customer:"));
+
+        return tenantId == null 
+            ? throw new HealthFormsException("The scope does not contain a tenantId.") 
+            : tenantId.Split(':')[1];
+    }
+
     public async Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default)
     {
         var authToken = await ClaimCode(code, codeVerifier, cancellationToken);
