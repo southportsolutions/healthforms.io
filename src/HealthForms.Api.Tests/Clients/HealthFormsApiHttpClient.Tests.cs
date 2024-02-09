@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using HealthForms.Api.Clients;
 using HealthForms.Api.Core.Models.SessionMember;
+using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Errors;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -564,6 +565,124 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var response = await ClassUnderTest.GetSessionSelectList(TenantToken, TenantId, DateTime.MinValue);
         Assert.NotNull(response);
+    }
+
+    #endregion
+
+    #region Get Webhook Subscriptions
+    
+
+    [Fact]
+    public async Task GetWebhookSubscriptions_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetWebhookSubscriptions("", TenantId, CancellationToken.None));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetWebhookSubscriptions_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.GetWebhookSubscriptions(TenantToken, "", CancellationToken.None));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task GetWebhookSubscriptions_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetWebhookSubscriptions(TenantToken, "123456789a", CancellationToken.None));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetWebhookSubscriptions()
+    {
+        var subscription = new WebhookSubscriptionRequest { EndpointUrl = "https://healthforms.io/webhook", Type = WebhookType.SessionMemberAdded };
+        var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None); 
+
+        var response = await ClassUnderTest.GetWebhookSubscriptions(TenantToken, TenantId, CancellationToken.None);
+        Assert.NotNull(response);
+        Assert.NotEmpty(response);
+
+        var getSubscription = response.Find(c => c.Id == subscriptionResponse.Id);
+        Assert.Equal(subscriptionResponse.EndpointUrl, getSubscription.EndpointUrl);
+        Assert.Equal(subscriptionResponse.Type, getSubscription.Type);
+
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
+    }
+
+    #endregion
+
+    #region Add Webhook Subscriptions
+
+
+    [Fact]
+    public async Task AddWebhookSubscriptions_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.AddWebhookSubscription("", TenantId, new WebhookSubscriptionRequest(), CancellationToken.None));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task AddWebhookSubscriptions_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.AddWebhookSubscription(TenantToken, "", new WebhookSubscriptionRequest(), CancellationToken.None));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task AddWebhookSubscriptions_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddWebhookSubscription(TenantToken, "123456789a", new WebhookSubscriptionRequest(), CancellationToken.None));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task AddWebhookSubscriptions()
+    {
+        var subscription = new WebhookSubscriptionRequest { EndpointUrl = "https://healthforms.io/webhook", Type = WebhookType.SessionMemberAdded };
+        var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None);
+
+        Assert.NotNull(subscriptionResponse.Id);
+        Assert.True(subscriptionResponse.IsActive);
+        Assert.Equal(subscriptionResponse.EndpointUrl, subscriptionResponse.EndpointUrl);
+        Assert.Equal(subscriptionResponse.Type, subscriptionResponse.Type);
+
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
+    }
+
+    #endregion
+
+    #region Delete Webhook Subscriptions
+
+
+    [Fact]
+    public async Task DeleteWebhookSubscriptions_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteWebhookSubscription("", TenantId, "id123", CancellationToken.None));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteWebhookSubscriptions_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.DeleteWebhookSubscription(TenantToken, "", "id123", CancellationToken.None));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task DeleteWebhookSubscriptions_InvalidTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteWebhookSubscription(TenantToken, "123456789a", "id12345678", CancellationToken.None));
+        Assert.Contains("4003", exception.Message);
+    }
+
+    [Fact]
+    public async Task DeleteWebhookSubscriptions()
+    {
+        var subscription = new WebhookSubscriptionRequest { EndpointUrl = "https://healthforms.io/webhook", Type = WebhookType.SessionMemberAdded };
+        var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None);
+
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
     }
 
     #endregion

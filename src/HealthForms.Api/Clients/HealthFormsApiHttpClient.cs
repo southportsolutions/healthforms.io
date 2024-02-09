@@ -15,6 +15,7 @@ using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
+using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Shared;
 using static IdentityModel.ClaimComparer;
 
@@ -26,11 +27,17 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
     protected readonly HttpClient HttpClient;
     private readonly HealthFormsApiOptions _options;
 
+
+    private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, ReferenceHandler = ReferenceHandler.IgnoreCycles };
+
+
     public HealthFormsApiHttpClient(HttpClient httpClient, IOptions<HealthFormsApiOptions> options, ILogger<HealthFormsApiHttpClient>? log = null)
     {
         Log = log;
         HttpClient = httpClient;
         _options = options.Value;
+
+        _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
     }
 
     #region Access Token
@@ -322,6 +329,35 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #endregion
 
+    #region Webhook Subscriptions
+
+    public async Task<List<WebhookSubscriptionResponse>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+
+        return await GetAsync<List<WebhookSubscriptionResponse>>($"v1/{tenantId}/webhooks/", tenantToken, cancellationToken);
+    }
+
+    public async Task<WebhookSubscriptionResponse> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+
+        return await PostJsonAsync<WebhookSubscriptionRequest, WebhookSubscriptionResponse>($"v1/{tenantId}/webhooks/", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<bool> DeleteWebhookSubscription(string tenantToken, string tenantId, string webhookId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(webhookId)) throw new ArgumentNullException(nameof(webhookId));
+
+        return await DeleteAsync($"v1/{tenantId}/webhooks/{webhookId}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
     #region Helpers
 
     #region Get
@@ -343,10 +379,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
         try
         {
-            var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, ReferenceHandler = ReferenceHandler.IgnoreCycles };
-            jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-
-            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: jsonOptions)
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
                    ?? throw new HealthFormsException("Unable deserialize.");
         }
         catch (Exception e)
@@ -378,7 +411,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
         try
         {
-            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken)
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
                    ?? throw new HealthFormsException("Unable deserialize.");
         }
         catch (Exception e)
