@@ -672,7 +672,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteWebhookSubscriptions_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteWebhookSubscription(TenantToken, "123456789a", "id123", CancellationToken.None));
+        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteWebhookSubscription(TenantToken, "123456789a", "id12345678", CancellationToken.None));
         Assert.Contains("4003", exception.Message);
     }
 
