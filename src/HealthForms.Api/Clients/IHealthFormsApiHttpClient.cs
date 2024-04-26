@@ -10,7 +10,7 @@ namespace HealthForms.Api.Clients;
 public interface IHealthFormsApiHttpClient
 {
     Task<AuthResponse> GetAccessToken(string tenantToken);
-    AuthRedirect GetRedirectUrl(string tenantId);
+    AuthRedirect GetRedirectUrl(string tenantId, string? redirectUrl = null);
     string GetTenantIdFromScope(string scope);
     Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default);
     Task<TokenResponse> ClaimCode(string code, string codeVerifier, CancellationToken cancellationToken = default);

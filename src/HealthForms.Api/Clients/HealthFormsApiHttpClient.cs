@@ -79,7 +79,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Claim Code
 
-    public AuthRedirect GetRedirectUrl(string tenantId)
+    public AuthRedirect GetRedirectUrl(string tenantId, string? redirectUrl = null)
     {
         if (tenantId == null) throw new ArgumentNullException(nameof(tenantId));
 
@@ -91,7 +91,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
                 clientId: _options.ClientId,
                 responseType: OidcConstants.ResponseTypes.Code,
                 scope: _options.Scopes.Replace("{{tenantId}}", tenantId),
-                redirectUri: _options.RedirectUrl,
+                redirectUri: string.IsNullOrWhiteSpace(redirectUrl) ? _options.RedirectUrl : redirectUrl,
                 codeChallenge: codeChallenge,
                 codeChallengeMethod: OidcConstants.CodeChallengeMethods.Sha256,
                 nonce: CryptoRandom.CreateUniqueId(),
