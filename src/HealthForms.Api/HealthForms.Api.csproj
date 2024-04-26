@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>HealthForms</PackageTags>
-    <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added custom redirect URL to the get redirectURL.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
@@ -24,13 +24,13 @@
 
   <ItemGroup>
     <PackageReference Include="HealthForms.Api.Core" Version="1.0.0" />
-    <PackageReference Include="IdentityModel" Version="6.2.0" />
+    <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
   </ItemGroup>
 
 	<ItemGroup>
