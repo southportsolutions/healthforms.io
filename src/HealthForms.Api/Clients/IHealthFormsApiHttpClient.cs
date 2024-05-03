@@ -12,8 +12,8 @@ public interface IHealthFormsApiHttpClient
     Task<AuthResponse> GetAccessToken(string tenantToken);
     AuthRedirect GetRedirectUrl(string tenantId, string? redirectUrl = null);
     string GetTenantIdFromScope(string scope);
-    Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default);
-    Task<TokenResponse> ClaimCode(string code, string codeVerifier, CancellationToken cancellationToken = default);
+    Task<string> GetTenantToken(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default);
+    Task<TokenResponse> ClaimCode(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default);
 
     Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, 
         int page = 1, CancellationToken cancellationToken = default);
