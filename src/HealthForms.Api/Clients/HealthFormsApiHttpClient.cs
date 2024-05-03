@@ -132,9 +132,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             : tenantId.Split(':')[1];
     }
 
-    public async Task<string> GetTenantToken(string code, string codeVerifier, CancellationToken cancellationToken = default)
+    public async Task<string> GetTenantToken(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default)
     {
-        var authToken = await ClaimCode(code, codeVerifier, cancellationToken);
+        var authToken = await ClaimCode(code, codeVerifier, redirectUrl, cancellationToken);
         if (string.IsNullOrWhiteSpace(authToken.RefreshToken))
         {
             Log?.LogCritical("Unable to get tenant HealthForms.io access token.");
@@ -144,7 +144,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return authToken.RefreshToken ?? string.Empty;
     }
 
-    public async Task<TokenResponse> ClaimCode(string code, string codeVerifier, CancellationToken cancellationToken = default)
+    public async Task<TokenResponse> ClaimCode(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default)
     {
         var authTokenResponse = await HttpClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest
         {
@@ -152,7 +152,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             ClientId = _options.ClientId,
             ClientSecret = _options.ClientSecret,
             Code = code,
-            RedirectUri = _options.RedirectUrl,
+            RedirectUri = redirectUrl ?? _options.RedirectUrl,
 
             // optional PKCE parameter
             CodeVerifier = codeVerifier, ClientCredentialStyle = ClientCredentialStyle.PostBody
