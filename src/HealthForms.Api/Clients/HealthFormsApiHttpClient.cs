@@ -191,13 +191,13 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionResponse>>>(nextUri, tenantToken, cancellationToken);
     }
     
-    public async Task<SessionResponse> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
+    public async Task<SessionResponse?> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
 
-        return await GetAsync<SessionResponse>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
+        return await GetAsync<SessionResponse?>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
     }
 
     public async Task<IEnumerable<SessionSelectResponse>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
@@ -205,7 +205,8 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
 
-        return await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+        var sessions = await GetAsync<IEnumerable<SessionSelectResponse>?>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+        return sessions ?? new List<SessionSelectResponse>();
     }
 
     #endregion
@@ -230,34 +231,34 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextUri, tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
+    public async Task<SessionMemberResponse?> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(sessionMemberId)) throw new ArgumentNullException(nameof(sessionMemberId));
 
-        return await GetAsync<SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
+        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
+    public async Task<SessionMemberResponse?> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalMemberId)) throw new ArgumentNullException(nameof(externalMemberId));
 
-        return await GetAsync<SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
+        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
+    public async Task<SessionMemberResponse?> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalAttendeeId)) throw new ArgumentNullException(nameof(externalAttendeeId));
 
-        return await GetAsync<SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
+        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
     }
 
     #endregion
@@ -362,7 +363,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Get
 
-    private async Task<TResponse> GetAsync<TResponse>(string route, string tenantToken, CancellationToken cancellationToken) where TResponse : class
+    private async Task<TResponse> GetAsync<TResponse>(string route, string tenantToken, CancellationToken cancellationToken) where TResponse : class?
     {
         var accessToken = await GetAccessToken(tenantToken);
         HttpClient.SetBearerToken(accessToken.AccessToken);
