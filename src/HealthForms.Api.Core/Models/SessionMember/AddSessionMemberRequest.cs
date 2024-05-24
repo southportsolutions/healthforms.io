@@ -2,8 +2,9 @@
 
 public class AddSessionMemberRequest
 {
-    public string? ExternalMemberId { get; set; }
+    public string? SessionMemberId { get; set; }
     public string? ExternalAttendeeId { get; set; }
+    public string? ExternalMemberId { get; set; }
     public string? Group { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
