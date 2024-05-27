@@ -2,9 +2,10 @@
 
 public class SessionMemberFormResponse
 {
-    public string? FormId { get; set; }
-    public string? FormName { get; set; }
-    public string? FormStatus { get; set; }
+    public string? Id { get; set; }
+    public string? Name { get; set; }
+    public string? Status { get; set; }
+    public string? StatusDescription { get; set; }
     public bool IsComplete { get; set; }
     public bool IsRequired { get; set; }
 }
