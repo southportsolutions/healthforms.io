@@ -17,7 +17,6 @@ using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Shared;
-using static IdentityModel.ClaimComparer;
 
 namespace HealthForms.Api.Clients;
 
@@ -265,13 +264,13 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Add SessionMember
 
-    public async Task<AddSessionMemberResponse> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)
+    public async Task<SessionMemberResponse> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
 
-        return await PostJsonAsync<AddSessionMemberRequest, AddSessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
+        return await PostJsonAsync<AddSessionMemberRequest, SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
     }
 
     public async Task<AddSessionMemberBulkStartResponse> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default)
@@ -292,6 +291,19 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(bulkId)) throw new ArgumentNullException(nameof(bulkId));
 
         return await GetAsync<AddSessionMemberBulkResponse>($"v1/{tenantId}/sessions/{sessionId}/members/bulk/{bulkId}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
+    #region Update SessionMember
+
+    public async Task<SessionMemberResponse> UpdateSessionMember(string tenantToken, string tenantId, string sessionId, UpdateSessionMemberRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        return await PutJsonAsync<UpdateSessionMemberRequest, SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
     }
 
     #endregion
@@ -383,7 +395,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
                    ?? throw new HealthFormsException("Unable deserialize.");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             var message = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
@@ -415,12 +427,44 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
                    ?? throw new HealthFormsException("Unable deserialize.");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
             Log?.LogError("{message}, Data: {data}", message, responseString);
             throw new HealthFormsException($"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.");
+        }
+
+    }
+
+    #endregion
+
+    #region Put
+
+    protected async Task<TResponse> PutJsonAsync<TRequest, TResponse>(string route, string tenantToken, TRequest data, CancellationToken cancellationToken = default) where TRequest : class where TResponse : class
+    {
+        var accessToken = await GetAccessToken(tenantToken);
+        HttpClient.SetBearerToken(accessToken.AccessToken);
+
+        var response = await HttpClient.PutAsJsonAsync($"{_options.HostAddressApi}{route}", data, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var responseError = await LogOnErrorResponse(response);
+            if (responseError != null) throw new HealthFormsException(responseError);
+            throw new HealthFormsException($"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
+        }
+
+        try
+        {
+            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
+                   ?? throw new HealthFormsException("Unable deserialize.");
+        }
+        catch (Exception)
+        {
+            var message = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}.";
+            var responseString = await response.Content.ReadAsStringAsync();
+            Log?.LogError("{message}, Data: {data}", message, responseString);
+            throw new HealthFormsException($"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}.");
         }
 
     }
