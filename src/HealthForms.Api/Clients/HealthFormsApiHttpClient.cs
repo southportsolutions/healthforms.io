@@ -179,7 +179,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
 
-        return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
+        var response = await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
+        response.Data ??= new PagedResponse<List<SessionResponse>>();
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
@@ -187,7 +189,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
 
-        return await GetAsync<PagedResponse<List<SessionResponse>>>(nextUri, tenantToken, cancellationToken);
+        var response = await GetAsync<PagedResponse<List<SessionResponse>>>(nextUri, tenantToken, cancellationToken);
+        response.Data ??= new PagedResponse<List<SessionResponse>>();
+        return response;
     }
     
     public async Task<HealthFormsApiResponse<SessionResponse?>> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
@@ -196,7 +200,8 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
 
-        return await GetAsync<SessionResponse?>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
+        var response = await GetAsync<SessionResponse?>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<IEnumerable<SessionSelectResponse>>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
@@ -204,8 +209,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
 
-        var sessions = await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
-        return sessions;
+        var response = await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+        response.Data ??= new List<SessionSelectResponse>();
+        return response;
     }
 
     #endregion
@@ -219,7 +225,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
 
-        return await GetAsync<PagedResponse<List<SessionMemberResponse>>>($"v1/{tenantId}/sessions/{sessionId}/members?page={page}", tenantToken, cancellationToken);
+        var response = await GetAsync<PagedResponse<List<SessionMemberResponse>>>($"v1/{tenantId}/sessions/{sessionId}/members?page={page}", tenantToken, cancellationToken);
+        response.Data ??= new PagedResponse<List<SessionMemberResponse>>();
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
@@ -227,7 +235,9 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
 
-        return await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextUri, tenantToken, cancellationToken);
+        var response = await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextUri, tenantToken, cancellationToken);
+        response.Data ??= new PagedResponse<List<SessionMemberResponse>>();
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
@@ -237,7 +247,8 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(sessionMemberId)) throw new ArgumentNullException(nameof(sessionMemberId));
 
-        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
+        var response = await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
@@ -247,7 +258,8 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalMemberId)) throw new ArgumentNullException(nameof(externalMemberId));
 
-        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
+        var response = await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
+        return response;
     }
 
     public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
@@ -257,7 +269,8 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
         if (string.IsNullOrWhiteSpace(externalAttendeeId)) throw new ArgumentNullException(nameof(externalAttendeeId));
 
-        return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
+        var response = await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}", tenantToken, cancellationToken);
+        return response;
     }
 
     #endregion
