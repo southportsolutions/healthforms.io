@@ -455,7 +455,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
             SessionMemberId = addResponse.Id,
             Email = "test2@southportsolutions.com",
             FirstName = "John",
-            LastName = "Doe",
+            LastName = "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
             Group = "Group 1",
             Phone = "555-555-5555",
             ExternalAttendeeId = addRequest.ExternalAttendeeId,
