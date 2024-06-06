@@ -173,7 +173,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Get Sessions
     
-    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -182,7 +182,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
     }
 
-    public async Task<PagedResponse<List<SessionResponse>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
@@ -190,7 +190,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionResponse>>>(nextUri, tenantToken, cancellationToken);
     }
     
-    public async Task<SessionResponse?> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionResponse?>> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -199,20 +199,20 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<SessionResponse?>($"v1/{tenantId}/sessions/{sessionId}", tenantToken, cancellationToken);
     }
 
-    public async Task<IEnumerable<SessionSelectResponse>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<IEnumerable<SessionSelectResponse>>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
 
-        var sessions = await GetAsync<IEnumerable<SessionSelectResponse>?>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
-        return sessions ?? new List<SessionSelectResponse>();
+        var sessions = await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
+        return sessions;
     }
 
     #endregion
 
     #region Get SessionMembers
 
-    public async Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -222,7 +222,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionMemberResponse>>>($"v1/{tenantId}/sessions/{sessionId}/members?page={page}", tenantToken, cancellationToken);
     }
 
-    public async Task<PagedResponse<List<SessionMemberResponse>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(nextUri)) throw new ArgumentNullException(nameof(nextUri));
@@ -230,7 +230,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<PagedResponse<List<SessionMemberResponse>>>(nextUri, tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse?> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -240,7 +240,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse?> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -250,7 +250,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<SessionMemberResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<SessionMemberResponse?> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -264,7 +264,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Add SessionMember
 
-    public async Task<SessionMemberResponse> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -273,7 +273,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await PostJsonAsync<AddSessionMemberRequest, SessionMemberResponse>($"v1/{tenantId}/sessions/{sessionId}/members", tenantToken, data, cancellationToken);
     }
 
-    public async Task<AddSessionMemberBulkStartResponse> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<AddSessionMemberBulkStartResponse>> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -283,7 +283,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await PostJsonAsync<List<AddSessionMemberRequest>, AddSessionMemberBulkStartResponse>($"v1/{tenantId}/sessions/{sessionId}/members/bulk", tenantToken, data, cancellationToken);
     }
 
-    public async Task<AddSessionMemberBulkResponse> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<AddSessionMemberBulkResponse>> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -297,7 +297,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Update SessionMember
 
-    public async Task<SessionMemberResponse> UpdateSessionMember(string tenantToken, string tenantId, string sessionId, UpdateSessionMemberRequest data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<SessionMemberResponse>> UpdateSessionMember(string tenantToken, string tenantId, string sessionId, UpdateSessionMemberRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -310,7 +310,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Delete SessionMembers
 
-    public async Task<bool> DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -320,7 +320,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<bool> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -330,7 +330,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}", tenantToken, cancellationToken);
     }
 
-    public async Task<bool> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -344,7 +344,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Webhook Subscriptions
 
-    public async Task<List<WebhookSubscriptionResponse>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -352,7 +352,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await GetAsync<List<WebhookSubscriptionResponse>>($"v1/{tenantId}/webhooks/", tenantToken, cancellationToken);
     }
 
-    public async Task<WebhookSubscriptionResponse> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<WebhookSubscriptionResponse>> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -360,7 +360,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await PostJsonAsync<WebhookSubscriptionRequest, WebhookSubscriptionResponse>($"v1/{tenantId}/webhooks/", tenantToken, data, cancellationToken);
     }
 
-    public async Task<bool> DeleteWebhookSubscription(string tenantToken, string tenantId, string webhookId, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> DeleteWebhookSubscription(string tenantToken, string tenantId, string webhookId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -375,7 +375,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Get
 
-    private async Task<TResponse> GetAsync<TResponse>(string route, string tenantToken, CancellationToken cancellationToken) where TResponse : class?
+    private async Task<HealthFormsApiResponse<TResponse>> GetAsync<TResponse>(string route, string tenantToken, CancellationToken cancellationToken) where TResponse : class?
     {
         var accessToken = await GetAccessToken(tenantToken);
         HttpClient.SetBearerToken(accessToken.AccessToken);
@@ -385,22 +385,23 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         {
             var responseError = await LogOnErrorResponse(response);
             if (response.StatusCode == HttpStatusCode.NotFound) return null!;
-
-            if (responseError != null) throw new HealthFormsException(responseError);
-            throw new HealthFormsException($"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}");
+            
+            var errorMessage = responseError?.Message ?? $"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}";
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError};
         }
 
         try
         {
-            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
-                   ?? throw new HealthFormsException("Unable deserialize.");
+            var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
+            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
+            return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
         catch (Exception)
         {
             var message = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
             Log?.LogError("{message}, Data: {data}", message, responseString);
-            throw new HealthFormsException($"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.");
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -409,30 +410,32 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Post
 
-    protected async Task<TResponse> PostJsonAsync<TRequest, TResponse>(string route, string tenantToken, TRequest data, CancellationToken cancellationToken = default) where TRequest : class where TResponse : class
+    protected async Task<HealthFormsApiResponse<TResponse>> PostJsonAsync<TRequest, TResponse>(string route, string tenantToken, TRequest requestData, CancellationToken cancellationToken = default) where TRequest : class where TResponse : class
     {
         var accessToken = await GetAccessToken(tenantToken);
         HttpClient.SetBearerToken(accessToken.AccessToken);
 
-        var response = await HttpClient.PostAsJsonAsync($"{_options.HostAddressApi}{route}", data, cancellationToken);
+        var response = await HttpClient.PostAsJsonAsync($"{_options.HostAddressApi}{route}", requestData, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             var responseError = await LogOnErrorResponse(response);
-            if (responseError != null) throw new HealthFormsException(responseError);
-            throw new HealthFormsException($"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
+
+            var errorMessage = responseError?.Message ?? $"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
         {
-            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
-                   ?? throw new HealthFormsException("Unable deserialize.");
+            var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
+            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
+            return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
         catch (Exception)
         {
             var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
             Log?.LogError("{message}, Data: {data}", message, responseString);
-            throw new HealthFormsException($"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.");
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -441,30 +444,31 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Put
 
-    protected async Task<TResponse> PutJsonAsync<TRequest, TResponse>(string route, string tenantToken, TRequest data, CancellationToken cancellationToken = default) where TRequest : class where TResponse : class
+    protected async Task<HealthFormsApiResponse<TResponse>> PutJsonAsync<TRequest, TResponse>(string route, string tenantToken, TRequest requestData, CancellationToken cancellationToken = default) where TRequest : class where TResponse : class
     {
         var accessToken = await GetAccessToken(tenantToken);
         HttpClient.SetBearerToken(accessToken.AccessToken);
 
-        var response = await HttpClient.PutAsJsonAsync($"{_options.HostAddressApi}{route}", data, cancellationToken);
+        var response = await HttpClient.PutAsJsonAsync($"{_options.HostAddressApi}{route}", requestData, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             var responseError = await LogOnErrorResponse(response);
-            if (responseError != null) throw new HealthFormsException(responseError);
-            throw new HealthFormsException($"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
+            var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
         {
-            return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions)
-                   ?? throw new HealthFormsException("Unable deserialize.");
+            var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
+            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
+            return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
         catch (Exception)
         {
             var message = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
             Log?.LogError("{message}, Data: {data}", message, responseString);
-            throw new HealthFormsException($"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}.");
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -473,7 +477,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Delete
 
-    protected async Task<bool> DeleteAsync(string route, string tenantToken, CancellationToken cancellationToken = default)
+    protected async Task<HealthFormsApiResponse> DeleteAsync(string route, string tenantToken, CancellationToken cancellationToken = default)
     {
         var accessToken = await GetAccessToken(tenantToken);
             HttpClient.SetBearerToken(accessToken.AccessToken);
@@ -482,12 +486,12 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (!response.IsSuccessStatusCode)
         {
             var responseError = await LogOnErrorResponse(response);
-            if (responseError != null) throw new HealthFormsException(responseError);
-            throw new HealthFormsException($"The Delete request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.");
+            var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
+            return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
 
         }
 
-        return response.IsSuccessStatusCode;
+        return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode };
     }
 
     #endregion
