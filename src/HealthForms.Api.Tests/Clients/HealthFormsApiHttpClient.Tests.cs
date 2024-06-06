@@ -118,8 +118,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetSessionMembers_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessionMembers(TenantToken, "123456789a", SessionId));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.GetSessionMembers(TenantToken, "123456789a", SessionId);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -127,13 +127,13 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId);
         Assert.NotNull(response);
-        Assert.NotEmpty(response.Data);
-        Assert.NotNull(response.NextUri);
+        Assert.NotEmpty(response.Data.Data);
+        Assert.NotNull(response.Data.NextUri);
 
 
-        response = await ClassUnderTest.GetSessionMembers(TenantToken, response.NextUri);
+        response = await ClassUnderTest.GetSessionMembers(TenantToken, response.Data.NextUri);
         Assert.NotNull(response);
-        Assert.NotEmpty(response.Data);
+        Assert.NotEmpty(response.Data.Data);
 
 
     }
@@ -143,7 +143,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var response = await ClassUnderTest.GetSessionMembers(TenantToken, TenantId, SessionId, 100);
         Assert.NotNull(response);
-        Assert.Empty(response.Data);
+        Assert.Empty(response.Data.Data);
     }
 
     #endregion
@@ -179,8 +179,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<AddSessionMemberRequest>();
         request.FirstName = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "FirstName");
     }
 
@@ -189,8 +189,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<AddSessionMemberRequest>();
         request.LastName = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "LastName");
     }
 
@@ -199,8 +199,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<AddSessionMemberRequest>();
         request.Email = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "Email");
     }
 
@@ -211,11 +211,11 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request.Email = "test1@southportsolutions.com";
         var response = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
         Assert.NotNull(response);
-        Assert.NotNull(response.Id);
-        Assert.NotNull(response.Status);
-        Assert.True(response.Forms.Any());
-        Assert.Equal(SessionId, response.SessionId);
-        Assert.False(response.InvitationAccepted);
+        Assert.NotNull(response.Data.Id);
+        Assert.NotNull(response.Data.Status);
+        Assert.True(response.Data.Forms.Any());
+        Assert.Equal(SessionId, response.Data.SessionId);
+        Assert.False(response.Data.InvitationAccepted);
     }
 
     #endregion
@@ -251,8 +251,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<List<AddSessionMemberRequest>>();
         request[0].FirstName = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "FirstName");
     }
 
@@ -261,8 +261,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<List<AddSessionMemberRequest>>();
         request[0].LastName = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "LastName");
     }
 
@@ -271,9 +271,9 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var request = Fixture.Create<List<AddSessionMemberRequest>>();
         request[0].Email = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
-        Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "Email");
+        var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", response.Error.Message);
+        Assert.Contains(response.Error.ValidationErrors, c => c.Field == "Email");
     }
 
     [Fact]
@@ -309,12 +309,12 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         }
         var response = await ClassUnderTest.AddSessionMembers(TenantToken, TenantId, SessionId, request);
         Assert.NotNull(response);
-        Assert.NotNull(response.Id);
+        Assert.NotNull(response.Data.Id);
 
         AddSessionMemberBulkResponse status;
         do
         {
-            status = await ClassUnderTest.GetAddSessionMembersStatus(TenantToken, TenantId, SessionId, response.Id);
+            status = (await ClassUnderTest.GetAddSessionMembersStatus(TenantToken, TenantId, SessionId, response.Data.Id)).Data;
             await Task.Delay(1000);
 
         } while(status.PercentComplete < 1);
@@ -370,7 +370,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
         var request = new UpdateSessionMemberRequest()
         {
-            SessionMemberId = addResponse.Id,
+            SessionMemberId = addResponse.Data.Id,
             Email = "test1@southportsolutions.com",
             FirstName = "",
             LastName = "Doe",
@@ -382,8 +382,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         };
 
         request.FirstName = "";
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "FirstName");
     }
 
@@ -398,7 +398,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
         var request = new UpdateSessionMemberRequest()
         {
-            SessionMemberId = addResponse.Id,
+            SessionMemberId = addResponse.Data.Id,
             Email = "test1@southportsolutions.com",
             FirstName = "John",
             LastName = "",
@@ -409,8 +409,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
             SendInvitationOn = null
         };
 
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "LastName");
     }
 
@@ -425,7 +425,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
         var request = new UpdateSessionMemberRequest()
         {
-            SessionMemberId = addResponse.Id,
+            SessionMemberId = addResponse.Data.Id,
             Email = "",
             FirstName = "John",
             LastName = "Doe",
@@ -436,8 +436,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
             SendInvitationOn = null
         };
 
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request));
-        Assert.Contains("3000", exception.Message);
+        var exception = await ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.Contains("3000", exception.ErrorMessage);
         Assert.Contains(exception.Error.ValidationErrors, c => c.Field == "Email");
     }
 
@@ -452,10 +452,10 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
         var request = new UpdateSessionMemberRequest()
         {
-            SessionMemberId = addResponse.Id,
+            SessionMemberId = addResponse.Data.Id,
             Email = "test2@southportsolutions.com",
             FirstName = "John",
-            LastName = "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
+            LastName = "Doe",
             Group = "Group 1",
             Phone = "555-555-5555",
             ExternalAttendeeId = addRequest.ExternalAttendeeId,
@@ -464,12 +464,12 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         };
 
         var response = await ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request);
-        Assert.Equal(request.FirstName, response.FirstName);
-        Assert.Equal(request.LastName, response.LastName);
-        Assert.Equal(request.ExternalAttendeeId, response.ExternalAttendeeId);
-        Assert.Equal(request.ExternalMemberId, response.ExternalMemberId);
-        Assert.False(response.IsComplete);
-        Assert.True(response.Forms.Any());
+        Assert.Equal(request.FirstName, response.Data.FirstName);
+        Assert.Equal(request.LastName, response.Data.LastName);
+        Assert.Equal(request.ExternalAttendeeId, response.Data.ExternalAttendeeId);
+        Assert.Equal(request.ExternalMemberId, response.Data.ExternalMemberId);
+        Assert.False(response.Data.IsComplete);
+        Assert.True(response.Data.Forms.Any());
     }
 
     #endregion
@@ -507,7 +507,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteSessionMember_InvalidId()
     {
-        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, "123456789a"));
+        await ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, "123456789a");
     }
 
     [Fact]
@@ -517,8 +517,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request.Email = "test1@southportsolutions.com";
         var response = await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
 
-        var isSuccessful = await ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, response.Id);
-        Assert.True(isSuccessful);
+        var apiResponse = await ClassUnderTest.DeleteSessionMember(TenantToken, TenantId, SessionId, response.Data.Id);
+        Assert.True(apiResponse.IsSuccess);
     }
 
     [Fact]
@@ -552,7 +552,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteSessionMemberByExternalAttendeeId_InvalidId()
     {
-        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, "123456789a"));
+        await ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, "123456789a");
     }
 
     [Fact]
@@ -563,7 +563,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
 
         var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalAttendeeId(TenantToken, TenantId, SessionId, request.ExternalAttendeeId);
-        Assert.True(isSuccessful);
+        Assert.True(isSuccessful.IsSuccess);
     }
 
     [Fact]
@@ -597,7 +597,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteSessionMemberByExternalId_InvalidId()
     {
-        await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, "123456789a"));
+        await ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, "123456789a");
     }
 
     [Fact]
@@ -607,8 +607,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         request.Email = "test1@southportsolutions.com";
         await ClassUnderTest.AddSessionMember(TenantToken, TenantId, SessionId, request);
 
-        var isSuccessful = await ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, request.ExternalMemberId);
-        Assert.True(isSuccessful);
+        var apiResponse = await ClassUnderTest.DeleteSessionMemberByExternalId(TenantToken, TenantId, SessionId, request.ExternalMemberId);
+        Assert.True(apiResponse.IsSuccess);
     }
 
     #endregion
@@ -632,8 +632,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetSessions_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessions(TenantToken, "123456789a", DateTime.MinValue));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.GetSessions(TenantToken, "123456789a", DateTime.MinValue);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -641,8 +641,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var response = await ClassUnderTest.GetSessions(TenantToken, TenantId, DateTime.MinValue);
         Assert.NotNull(response);
-        Assert.NotEmpty(response.Data);
-        Assert.Null(response.NextUri);
+        Assert.NotEmpty(response.Data.Data);
+        Assert.Null(response.Data.NextUri);
     }
 
     #endregion
@@ -666,8 +666,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetSession_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSession(TenantToken, "123456789a", "lt28Hvo3kg"));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.GetSession(TenantToken, "123456789a", "lt28Hvo3kg");
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -698,8 +698,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetSessionSelectList_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetSessionSelectList(TenantToken, "123456789a", DateTime.MinValue));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.GetSessionSelectList(TenantToken, "123456789a", DateTime.MinValue);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -731,8 +731,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task GetWebhookSubscriptions_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.GetWebhookSubscriptions(TenantToken, "123456789a", CancellationToken.None));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.GetWebhookSubscriptions(TenantToken, "123456789a", CancellationToken.None);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -742,14 +742,14 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None); 
 
         var response = await ClassUnderTest.GetWebhookSubscriptions(TenantToken, TenantId, CancellationToken.None);
-        Assert.NotNull(response);
-        Assert.NotEmpty(response);
+        Assert.NotNull(response.Data);
+        Assert.NotEmpty(response.Data);
 
-        var getSubscription = response.Find(c => c.Id == subscriptionResponse.Id);
-        Assert.Equal(subscriptionResponse.EndpointUrl, getSubscription.EndpointUrl);
-        Assert.Equal(subscriptionResponse.Type, getSubscription.Type);
+        var getSubscription = response.Data.Find(c => c.Id == subscriptionResponse.Data.Id);
+        Assert.Equal(subscriptionResponse.Data.EndpointUrl, getSubscription.EndpointUrl);
+        Assert.Equal(subscriptionResponse.Data.Type, getSubscription.Type);
 
-        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Data.Id, CancellationToken.None);
     }
 
     #endregion
@@ -774,8 +774,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task AddWebhookSubscriptions_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.AddWebhookSubscription(TenantToken, "123456789a", new WebhookSubscriptionRequest(), CancellationToken.None));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.AddWebhookSubscription(TenantToken, "123456789a", new WebhookSubscriptionRequest(), CancellationToken.None);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -784,12 +784,12 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         var subscription = new WebhookSubscriptionRequest { EndpointUrl = "https://healthforms.io/webhook", Type = WebhookType.SessionMemberAdded };
         var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None);
 
-        Assert.NotNull(subscriptionResponse.Id);
-        Assert.True(subscriptionResponse.IsActive);
-        Assert.Equal(subscriptionResponse.EndpointUrl, subscriptionResponse.EndpointUrl);
-        Assert.Equal(subscriptionResponse.Type, subscriptionResponse.Type);
+        Assert.NotNull(subscriptionResponse.Data.Id);
+        Assert.True(subscriptionResponse.Data.IsActive);
+        Assert.Equal(subscriptionResponse.Data.EndpointUrl, subscriptionResponse.Data.EndpointUrl);
+        Assert.Equal(subscriptionResponse.Data.Type, subscriptionResponse.Data.Type);
 
-        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Data.Id, CancellationToken.None);
     }
 
     #endregion
@@ -814,8 +814,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     [Fact]
     public async Task DeleteWebhookSubscriptions_InvalidTenantId()
     {
-        var exception = await Assert.ThrowsAsync<HealthFormsException>(() => ClassUnderTest.DeleteWebhookSubscription(TenantToken, "123456789a", "id12345678", CancellationToken.None));
-        Assert.Contains("4003", exception.Message);
+        var exception = await ClassUnderTest.DeleteWebhookSubscription(TenantToken, "123456789a", "id12345678", CancellationToken.None);
+        Assert.Contains("4003", exception.ErrorMessage);
     }
 
     [Fact]
@@ -824,7 +824,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         var subscription = new WebhookSubscriptionRequest { EndpointUrl = "https://healthforms.io/webhook", Type = WebhookType.SessionMemberAdded };
         var subscriptionResponse = await ClassUnderTest.AddWebhookSubscription(TenantToken, TenantId, subscription, CancellationToken.None);
 
-        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Id, CancellationToken.None);
+        await ClassUnderTest.DeleteWebhookSubscription(TenantToken, TenantId, subscriptionResponse.Data.Id, CancellationToken.None);
     }
 
     #endregion

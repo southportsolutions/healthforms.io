@@ -16,28 +16,28 @@ public interface IHealthFormsApiHttpClient
     Task<string> GetTenantToken(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default);
     Task<TokenResponse> ClaimCode(string code, string codeVerifier, string? redirectUrl = null, CancellationToken cancellationToken = default);
 
-    Task<HealthFormsApiResponse<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>>> GetSessions(
+    Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(
         string tenantToken, string tenantId, DateTime startDate,
         int page = 1, CancellationToken cancellationToken = default);
-    Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionResponse?>> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = bad);
+    Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionResponse?>> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default);
 
-    Task<HealthFormsApiResponse<IEnumerable<SessionSelectResponse>>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = bad);
+    Task<HealthFormsApiResponse<IEnumerable<SessionSelectResponse>>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default);
     
-    Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<AddSessionMemberBulkStartResponse>> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<AddSessionMemberBulkResponse>> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<SessionMemberResponse>> UpdateSessionMember(string tenantToken, string tenantId, string sessionId, UpdateSessionMemberRequest data, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse> DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = bad);
+    Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<AddSessionMemberBulkStartResponse>> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<AddSessionMemberBulkResponse>> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberResponse>> UpdateSessionMember(string tenantToken, string tenantId, string sessionId, UpdateSessionMemberRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> DeleteSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
 
-    Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse<WebhookSubscriptionResponse>> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = bad);
-    Task<HealthFormsApiResponse> DeleteWebhookSubscription(string tenantToken, string tenantId, string webhookId, CancellationToken cancellationToken = bad);
+    Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<WebhookSubscriptionResponse>> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> DeleteWebhookSubscription(string tenantToken, string tenantId, string webhookId, CancellationToken cancellationToken = default);
 }

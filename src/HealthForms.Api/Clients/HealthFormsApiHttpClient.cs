@@ -173,13 +173,13 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Get Sessions
     
-    public async Task<HealthFormsApiResponse<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string tenantId, DateTime startDate, int page = 1, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
         if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
 
-        return await GetAsync< HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
+        return await GetAsync<PagedResponse<List<SessionResponse>>>($"v1/{tenantId}/sessions?startDate={startDate.Date:yyyy-MM-dd}&page={page}", tenantToken, cancellationToken);
     }
 
     public async Task<HealthFormsApiResponse<PagedResponse<List<SessionResponse>>>> GetSessions(string tenantToken, string nextUri, CancellationToken cancellationToken = default)
@@ -387,7 +387,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             if (response.StatusCode == HttpStatusCode.NotFound) return null!;
             
             var errorMessage = responseError?.Message ?? $"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage };
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError};
         }
 
         try
@@ -421,7 +421,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             var responseError = await LogOnErrorResponse(response);
 
             var errorMessage = responseError?.Message ?? $"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage };
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
@@ -454,7 +454,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         {
             var responseError = await LogOnErrorResponse(response);
             var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage };
+            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
@@ -487,7 +487,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         {
             var responseError = await LogOnErrorResponse(response);
             var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage };
+            return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
 
         }
 
