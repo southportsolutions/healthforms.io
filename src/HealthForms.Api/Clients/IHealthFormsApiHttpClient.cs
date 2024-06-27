@@ -29,6 +29,7 @@ public interface IHealthFormsApiHttpClient
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<SessionMemberSearchResponse>> SearchSessionMember(string tenantToken, string tenantId, string sessionId, SessionMemberSearchRequest request, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<AddSessionMemberBulkStartResponse>> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<AddSessionMemberBulkResponse>> GetAddSessionMembersStatus(string tenantToken, string tenantId, string sessionId, string bulkId, CancellationToken cancellationToken = default);

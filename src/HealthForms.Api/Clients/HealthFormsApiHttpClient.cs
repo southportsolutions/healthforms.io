@@ -275,6 +275,21 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #endregion
 
+    #region Find SessionMembers
+    
+    public async Task<HealthFormsApiResponse<SessionMemberSearchResponse>> SearchSessionMember(string tenantToken, string tenantId, string sessionId, SessionMemberSearchRequest request, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        var response = await PostJsonAsync<SessionMemberSearchRequest, SessionMemberSearchResponse>($"v1/{tenantId}/sessions/{sessionId}/members/search", tenantToken, request, cancellationToken);
+        return response;
+    }
+    
+
+    #endregion
+
     #region Add SessionMember
 
     public async Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default)

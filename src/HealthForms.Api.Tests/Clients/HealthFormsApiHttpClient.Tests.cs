@@ -147,6 +147,51 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     }
 
     #endregion
+    
+    #region Find Session Members
+
+    [Fact]
+    public async Task SearchSessionMembers_MissingTenantToken()
+    {
+        var request = new SessionMemberSearchRequest();
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.SearchSessionMember("", TenantId, SessionId, request));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task SearchSessionMembers_MissingTenantId()
+    {
+        var request = new SessionMemberSearchRequest();
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.SearchSessionMember(TenantToken, "", SessionId, request));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task SearchSessionMembers_MissingSessionId()
+    {
+        var request = new SessionMemberSearchRequest();
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.SearchSessionMember(TenantToken, TenantId, "", request));
+        Assert.Equal("sessionId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task SearchSessionMembers_InvalidTenantId()
+    {
+        var request = new SessionMemberSearchRequest();
+        var exception = await ClassUnderTest.SearchSessionMember(TenantToken, "123456789a", SessionId, request);
+        Assert.Contains("4003", exception.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task SearchSessionMembers()
+    {
+        var request = new SessionMemberSearchRequest(){ExternalAttendeeId = "123456789a", ExternalMemberId = "123456789b"};
+        var response = await ClassUnderTest.SearchSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.NotNull(response);
+        Assert.Equal(SessionMemberSearchResult.None, response.Data.Result);
+    }
+
+    #endregion
 
     #region Add Session Member
 
