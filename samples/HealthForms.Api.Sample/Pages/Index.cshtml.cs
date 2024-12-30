@@ -5,9 +5,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HealthForms.Api.Sample.Pages
 {
-    public class IndexModel(IHealthFormsApiHttpClient healthFormsHttpClient, ILogger<IndexModel> logger)
-        : PageModel
+    public class IndexModel : PageModel
     {
+        private readonly IHealthFormsApiHttpClient _healthFormsHttpClient;
+
+        public IndexModel(IHealthFormsApiHttpClient healthFormsHttpClient, ILogger<IndexModel> logger)
+        {
+            _healthFormsHttpClient = healthFormsHttpClient;
+        }
+
         [BindProperty]
         public string TenantId { get; set; } = "ABC";
 
@@ -22,7 +28,7 @@ namespace HealthForms.Api.Sample.Pages
                 return Page();
             }
 
-            var redirectData = healthFormsHttpClient.GetRedirectUrl(TenantId);
+            var redirectData = _healthFormsHttpClient.GetRedirectUrl(TenantId);
             PersistentData.TenantCodeVerifications[TenantId] = redirectData.CodeVerifier;
             return Redirect(redirectData.Uri);
         }
