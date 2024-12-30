@@ -2,4 +2,4 @@
 
 namespace HealthForms.Api.Core.Models.Webhooks;
 
-public class WebhookSession : WebhookData<SessionResponse>;
+public class WebhookSession : WebhookData<SessionResponse>{}
