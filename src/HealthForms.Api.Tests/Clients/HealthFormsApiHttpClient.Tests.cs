@@ -509,6 +509,8 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         };
 
         var response = await ClassUnderTest.UpdateSessionMember(TenantToken, TenantId, SessionId, request);
+        Assert.NotNull(response);
+        Assert.NotNull(response.Data);
         Assert.Equal(request.FirstName, response.Data.FirstName);
         Assert.Equal(request.LastName, response.Data.LastName);
         Assert.Equal(request.ExternalAttendeeId, response.Data.ExternalAttendeeId);

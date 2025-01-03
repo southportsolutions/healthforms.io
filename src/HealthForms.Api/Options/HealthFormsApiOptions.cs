@@ -3,7 +3,7 @@ namespace HealthForms.Api.Options
 {
     public class HealthFormsApiOptions
     {
-        public const string Key = "HeatlhForms";
+        public const string Key = "HealthForms";
         public string HostAddress { get; set; } = "https://app.healthforms.io/";
 
         private string? _hostAddressAuth;
