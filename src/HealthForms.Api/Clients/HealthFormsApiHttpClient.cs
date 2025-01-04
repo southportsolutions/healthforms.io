@@ -531,9 +531,17 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
         var responseString = await response.Content.ReadAsStringAsync();
         HealthFormsErrorResponse? errorResponse = null;
+        string? errorString = null;
         if (response.StatusCode != HttpStatusCode.NotFound)
         {
-            errorResponse = await response.Content.ReadFromJsonAsync<HealthFormsErrorResponse>();
+            try
+            {
+                errorResponse = await response.Content.ReadFromJsonAsync<HealthFormsErrorResponse>();
+            }
+            catch (JsonException e)
+            {
+                //ignore
+            }
         }
 
         if (errorResponse != null)
