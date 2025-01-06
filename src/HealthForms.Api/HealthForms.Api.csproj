@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>HealthForms</PackageTags>
-    <PackageReleaseNotes>Added custom redirect URL to the get redirectURL.</PackageReleaseNotes>
+    <PackageReleaseNotes>Bug Fixes.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>

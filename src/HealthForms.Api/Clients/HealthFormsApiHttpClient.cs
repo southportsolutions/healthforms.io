@@ -69,7 +69,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         }
         catch (Exception e)
         {
-            Log?.LogError(e, $"Error getting the admin token. AuthHost: {_options.HostAddressAuth} Message: {e.Message}");
+            Log?.LogError(e, "Error getting the admin token. AuthHost: {HostAddressAuth} Message: {Message}", _options.HostAddressAuth, e.Message);
             throw new HealthFormsException($"Error getting the admin token. AuthHost: {_options.HostAddressAuth} Message: {e.Message}");
         }
     }
@@ -164,7 +164,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             return authTokenResponse;
         }
 
-        Log?.LogCritical("Unable to claim HealthForms.io code. Reason: {reason}  Message: {message}", authTokenResponse.ErrorType, authTokenResponse.ErrorDescription);
+        Log?.LogCritical("Unable to claim HealthForms.io code. Reason: {Reason}  Message: {Message}", authTokenResponse.ErrorType, authTokenResponse.ErrorDescription);
         throw new HealthFormsAuthException("Unable to claim HealthForms.io code.", authTokenResponse);
 
     }
@@ -412,24 +412,24 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (!response.IsSuccessStatusCode)
         {
             var responseError = await LogOnErrorResponse(response);
-            if (response.StatusCode == HttpStatusCode.NotFound) return null!;
+            if (response.StatusCode == HttpStatusCode.NotFound) return new HealthFormsApiResponse<TResponse> { StatusCode = (int)response.StatusCode, ErrorMessage = "Not Found", Error = responseError};
             
             var errorMessage = responseError?.Message ?? $"The Get request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError};
+            return new HealthFormsApiResponse<TResponse> { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError};
         }
 
         try
         {
             var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
-            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
+            if (data == null) return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
             return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
-        catch (Exception)
+        catch (Exception e)
         {
             var message = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
-            Log?.LogError("{message}, Data: {data}", message, responseString);
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}." };
+            Log?.LogError(e, "{Message}, Data: {Data}", message, responseString);
+            return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the get request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -449,21 +449,22 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             var responseError = await LogOnErrorResponse(response);
 
             var errorMessage = responseError?.Message ?? $"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
+            return new HealthFormsApiResponse<TResponse> { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
         {
             var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
-            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
-            return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
+            return data == null 
+                ? new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = "Unable to deserialize data." } 
+                : new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
-        catch (Exception)
+        catch (Exception e)
         {
             var message = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
-            Log?.LogError("{message}, Data: {data}", message, responseString);
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}." };
+            Log?.LogError(e, "{Message}, Data: {Data}", message, responseString);
+            return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -482,21 +483,21 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         {
             var responseError = await LogOnErrorResponse(response);
             var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
+            return new HealthFormsApiResponse<TResponse> { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
         }
 
         try
         {
             var data = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken, options: _jsonOptions);
-            if (data == null) return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
+            if (data == null) return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = "Unable to deserialize data." };
             return new HealthFormsApiResponse<TResponse> { Data = data, StatusCode = (int)response.StatusCode };
         }
-        catch (Exception)
+        catch (Exception e)
         {
             var message = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}.";
             var responseString = await response.Content.ReadAsStringAsync();
-            Log?.LogError("{message}, Data: {data}", message, responseString);
-            return new HealthFormsApiResponse<TResponse>() { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}." };
+            Log?.LogError(e, "{Message}, Data: {Data}", message, responseString);
+            return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the put request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
     }
@@ -515,11 +516,11 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         {
             var responseError = await LogOnErrorResponse(response);
             var errorMessage = responseError?.Message ?? $"The Put request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
-            return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
+            return new HealthFormsApiResponse { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
 
         }
 
-        return new HealthFormsApiResponse() { StatusCode = (int)response.StatusCode };
+        return new HealthFormsApiResponse { StatusCode = (int)response.StatusCode };
     }
 
     #endregion
@@ -531,14 +532,13 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
         var responseString = await response.Content.ReadAsStringAsync();
         HealthFormsErrorResponse? errorResponse = null;
-        string? errorString = null;
         if (response.StatusCode != HttpStatusCode.NotFound)
         {
             try
             {
                 errorResponse = await response.Content.ReadFromJsonAsync<HealthFormsErrorResponse>();
             }
-            catch (JsonException e)
+            catch (JsonException)
             {
                 //ignore
             }
@@ -546,13 +546,11 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
         if (errorResponse != null)
         {
-            Log?.LogError($"HealthForms Request Error at: {response.RequestMessage?.RequestUri?.ToString() ?? "Unknown HealthForms Request Address"} Response: {responseString}");
+            Log?.LogError("HealthForms Request Error at: {Address} Response: {ResponseString}", response.RequestMessage?.RequestUri?.ToString() ?? "Unknown HealthForms Request Address", responseString);
             return errorResponse;
         }
         if (!response.IsSuccessStatusCode || responseString.Contains("\"status\":\"failure\""))
-        {
-            Log?.LogError($"HealthForms Request Error at: {response.RequestMessage?.RequestUri?.ToString() ?? "Unknown HealthForms Request Address"} Response: {responseString}");
-        }
+            Log?.LogError("HealthForms Request Error at: {Address} Response: {ResponseString}", response.RequestMessage?.RequestUri?.ToString() ?? "Unknown HealthForms Request Address", responseString);
 
         return null;
     }
