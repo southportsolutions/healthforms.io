@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using HealthForms.Api.Clients;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Webhooks;
@@ -694,7 +695,7 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
 
     #endregion
 
-    #region Get Sessions
+    #region Get Session
 
     [Fact]
     public async Task GetSession_MissingTenantToken()
@@ -754,6 +755,15 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
     {
         var response = await ClassUnderTest.GetSessionSelectList(TenantToken, TenantId, DateTime.MinValue);
         Assert.NotNull(response);
+    }
+
+    [Fact]
+    public async Task GetSessionSelectList_NoDataResponse()
+    {
+        var response = await ClassUnderTest.GetSessionSelectList(TenantToken, TenantId, DateTime.MaxValue.AddYears(-1));
+        Assert.NotNull(response);
+        Assert.Equal((int)HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("Not Found", response.ErrorMessage);
     }
 
     #endregion
