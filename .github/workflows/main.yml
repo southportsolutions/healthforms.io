@@ -27,7 +27,7 @@ on:
 
 env:
   PROJECT_NAME: ${{secrets.PROJECT_NAME}}
-  BUILD_CONFIGURATION: ${{secrets.BUILD_CONFIGURATION}}
+  BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
 jobs:
   build-and-deploy:
@@ -60,7 +60,9 @@ jobs:
           shopt -s globstar nullglob
 
       - name: Restore
-        run: dotnet restore **/${{ env.PROJECT_NAME }}.csproj --configfile nuget.config
+        run: | 
+          shopt -s globstar nullglob
+          dotnet restore **/${{ env.PROJECT_NAME }}.csproj --configfile nuget.config
 
       - name: Build & Pack
         run: |
