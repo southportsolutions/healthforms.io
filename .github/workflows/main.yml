@@ -1,5 +1,5 @@
 
-name: Core - Build and Deploy
+name: Library - Build and Deploy
 
 on:
   workflow_dispatch:
