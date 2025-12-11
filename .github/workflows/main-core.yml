@@ -26,8 +26,8 @@ on:
     tags: [ 'release-core@*' ]
 
 env:
-  PROJECT_NAME: ${{secrets.PROJECT_NAME_CORE}}
-  BUILD_CONFIGURATION: ${{secrets.BUILD_CONFIGURATION}}
+  PROJECT_PATH: ${{vars.PROJECT_PATH_CORE}}
+  BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
 jobs:
   build-and-deploy:
@@ -41,6 +41,22 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
+        
+      - name: Derive PROJECT_NAME (keep PROJECT_PATH unchanged)
+        id: project-name
+        shell: bash
+        run: |
+          # use the existing PROJECT_PATH env var (do not overwrite it)
+          path="${PROJECT_PATH:-}"
+          path="${path%/}"                  # drop trailing slash if any
+          last="${path##*/}"                # last path segment
+          if [[ "${last,,}" == *.csproj ]]; then
+            PROJECT_NAME="${last%.csproj}"  # strip extension if present
+          else
+            PROJECT_NAME="$last"
+          fi
+          echo "Derived PROJECT_NAME=$PROJECT_NAME"
+          echo "PROJECT_NAME=$PROJECT_NAME" >> "$GITHUB_ENV"
 
       - name: Resolve version
         id: version
@@ -52,7 +68,8 @@ jobs:
           else
             VERSION="1.0.0-alpha1"
           fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Derived VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
       
       - name: Turn on globstar and nullglob
         shell: bash
@@ -60,18 +77,18 @@ jobs:
           shopt -s globstar nullglob
 
       - name: Restore
-        run: dotnet restore ./Southport.UnitTesting.EFCore.SQL.sln --configfile nuget.config
+        run: dotnet restore ./${{ env.PROJECT_PATH }}.csproj --configfile nuget.config
 
       - name: Build & Pack
         run: |
-          dotnet pack **/${{ env.PROJECT_NAME }}.csproj \
+          dotnet pack ./${{ env.PROJECT_PATH }}.csproj \
             --output "${{ github.workspace }}/artifacts" \
             --configuration "${{ env.BUILD_CONFIGURATION }}" \
-            /p:Version="${{ steps.version.outputs.version }}"
+            /p:Version="$VERSION"
 
       - name: Publish to nuget.org (only on release tags)
         if: startsWith(github.ref, 'refs/tags/release@')
         env:
           NUGET_API_KEY: ${{ secrets.NUGETPUSH }}
           SOURCE: 'https://api.nuget.org/v3/index.json'
-        run: dotnet nuget push **/${{ env.PROJECT_NAME }}.${{ steps.version.outputs.version }}.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
+        run: dotnet nuget push **/$PROJECT_NAME.$VERSION.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
