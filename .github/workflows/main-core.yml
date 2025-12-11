@@ -26,8 +26,8 @@ on:
     tags: [ 'release-core@*' ]
 
 env:
-  PROJECT_NAME: ${{secrets.PROJECT_NAME_CORE}}
-  BUILD_CONFIGURATION: ${{secrets.BUILD_CONFIGURATION}}
+  PROJECT_NAME: ${{vars.PROJECT_NAME_CORE}}
+  BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
 jobs:
   build-and-deploy:

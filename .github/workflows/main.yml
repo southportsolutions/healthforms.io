@@ -26,7 +26,7 @@ on:
     tags: [ 'release@*' ]
 
 env:
-  PROJECT_NAME: ${{secrets.PROJECT_NAME}}
+  PROJECT_NAME: ${{vars.PROJECT_NAME}}
   BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
 jobs:
