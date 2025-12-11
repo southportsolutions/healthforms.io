@@ -26,6 +26,7 @@ on:
     tags: [ 'release-core@*' ]
 
 env:
+  PROJECT_PATH: ${{vars.PROJECT_PATH_CORE}}${{vars.PROJECT_NAME_CORE}}
   PROJECT_NAME: ${{vars.PROJECT_NAME_CORE}}
   BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
@@ -60,11 +61,11 @@ jobs:
           shopt -s globstar nullglob
 
       - name: Restore
-        run: dotnet restore **/${{ env.PROJECT_NAME }}.csproj --configfile nuget.config
+        run: dotnet restore ./${{ env.PROJECT_PATH }}.csproj --configfile nuget.config
 
       - name: Build & Pack
         run: |
-          dotnet pack **/${{ env.PROJECT_NAME }}.csproj \
+          dotnet pack ./${{ env.PROJECT_PATH }}.csproj \
             --output "${{ github.workspace }}/artifacts" \
             --configuration "${{ env.BUILD_CONFIGURATION }}" \
             /p:Version="${{ steps.version.outputs.version }}"
