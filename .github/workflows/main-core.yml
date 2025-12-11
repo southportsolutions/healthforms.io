@@ -26,8 +26,7 @@ on:
     tags: [ 'release-core@*' ]
 
 env:
-  PROJECT_PATH: ${{vars.PROJECT_PATH_CORE}}${{vars.PROJECT_NAME_CORE}}
-  PROJECT_NAME: ${{vars.PROJECT_NAME_CORE}}
+  PROJECT_PATH: ${{vars.PROJECT_PATH_CORE}}
   BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   
 jobs:
@@ -42,6 +41,22 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
+        
+      - name: Derive PROJECT_NAME (keep PROJECT_PATH unchanged)
+        id: project-name
+        shell: bash
+        run: |
+          # use the existing PROJECT_PATH env var (do not overwrite it)
+          path="${PROJECT_PATH:-}"
+          path="${path%/}"                  # drop trailing slash if any
+          last="${path##*/}"                # last path segment
+          if [[ "${last,,}" == *.csproj ]]; then
+            PROJECT_NAME="${last%.csproj}"  # strip extension if present
+          else
+            PROJECT_NAME="$last"
+          fi
+          echo "Derived PROJECT_NAME=$project_name"
+          echo "PROJECT_NAME=$project_name" >> "$GITHUB_ENV"
 
       - name: Resolve version
         id: version
@@ -75,4 +90,4 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGETPUSH }}
           SOURCE: 'https://api.nuget.org/v3/index.json'
-        run: dotnet nuget push **/${{ env.PROJECT_NAME }}.${{ steps.version.outputs.version }}.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
+        run: dotnet nuget push **/${{ steps.project-name.outputs.project-name }}.${{ steps.version.outputs.version }}.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
