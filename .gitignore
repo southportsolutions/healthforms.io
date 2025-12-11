@@ -287,7 +287,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /Help
-/GuidebookConsole/appsettings.local.json
-/KlikTest/appsettings.local.json
+
+appsettings.Development.json
 /HealthForms.Api.Tests/appsettings.json
 /src/HealthForms.Api.Tests/appsettings.json
