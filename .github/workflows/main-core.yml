@@ -60,7 +60,7 @@ jobs:
           shopt -s globstar nullglob
 
       - name: Restore
-        run: dotnet restore ./Southport.UnitTesting.EFCore.SQL.sln --configfile nuget.config
+        run: dotnet restore **/${{ env.PROJECT_NAME }}.csproj --configfile nuget.config
 
       - name: Build & Pack
         run: |
