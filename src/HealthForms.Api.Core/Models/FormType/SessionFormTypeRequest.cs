@@ -1,4 +1,4 @@
-﻿namespace HealthForms.Api.Core.Models.Sessions;
+namespace HealthForms.Api.Core.Models.FormType;
 
 public class SessionFormTypeRequest : SessionFormTypeRequestBase
 {

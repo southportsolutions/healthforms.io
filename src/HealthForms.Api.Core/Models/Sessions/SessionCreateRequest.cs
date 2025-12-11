@@ -1,6 +1,8 @@
+using HealthForms.Api.Core.Models.FormType;
+
 namespace HealthForms.Api.Core.Models.Sessions;
 
-public class SessionCreateRequest : SessionCreateRequestBase
+public class SessionCreateRequest : SessionCreateRequestBase<SessionFormTypeRequest>
 {
     public override string? Name { get; set; }
     public override DateTime StartDate { get; set; }
