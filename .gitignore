@@ -288,6 +288,7 @@ __pycache__/
 *.xsd.cs
 /Help
 
+appSettings.config
 appsettings.Development.json
 /HealthForms.Api.Tests/appsettings.json
 /src/HealthForms.Api.Tests/appsettings.json
