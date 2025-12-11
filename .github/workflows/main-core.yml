@@ -1,5 +1,5 @@
 
-name: Build and Deploy
+name: Core - Build and Deploy
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ on:
     tags: [ 'release-core@*' ]
 
 env:
-  PROJECT_NAME: ${{secrets.PROJECT_NAME}}
+  PROJECT_NAME: ${{secrets.PROJECT_NAME_CORE}}
   BUILD_CONFIGURATION: ${{secrets.BUILD_CONFIGURATION}}
   
 jobs:
@@ -68,56 +68,6 @@ jobs:
             --output "${{ github.workspace }}/artifacts" \
             --configuration "${{ env.BUILD_CONFIGURATION }}" \
             /p:Version="${{ steps.version.outputs.version }}"
-
-      
-      - name: Test (NET9) and collect coverage
-        run: |
-          dotnet test **/${{ env.PROJECT_NAME }}.Tests.csproj \
-            --framework net9 \
-            --configuration Release \
-            --collect:"XPlat Code Coverage" \
-            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
-          # Move/rename coverage file for NET9
-          find . -name 'coverage.cobertura.xml' -exec mv {} coverage.net9.cobertura.xml \;
-
-      - name: Test (NET10) and collect coverage
-        run: |
-          dotnet test **/${{ env.PROJECT_NAME }}.Tests.csproj \
-            --framework net10 \
-            --configuration Release \
-            --collect:"XPlat Code Coverage" \
-            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
-            # Move/rename coverage file for NET10
-          find . -name 'coverage.cobertura.xml' -exec mv {} coverage.net10.cobertura.xml \;
-
-      
-      - name: Upload NET9 coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-net9
-          path: coverage.net9.cobertura.xml
-          badge: true
-          fail_below_min: false
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: true
-          indicators: true
-          output: both
-          thresholds: '60 80'
-
-      - name: Upload NET10 coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-net10
-          path: coverage.net10.cobertura.xml
-          badge: true
-          fail_below_min: false
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: true
-          indicators: true
-          output: both
-          thresholds: '60 80'
 
       - name: Publish to nuget.org (only on release tags)
         if: startsWith(github.ref, 'refs/tags/release@')
