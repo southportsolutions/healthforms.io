@@ -23,7 +23,7 @@ on:
           required: true
   push:
     branches: [ main ]
-    tags: [ 'release-core@*' ]
+    tags: [ 'release@*' ]
 
 env:
   PROJECT_PATH: ${{vars.PROJECT_PATH}}
