@@ -84,11 +84,11 @@ jobs:
           dotnet pack ./${{ env.PROJECT_PATH }}.csproj \
             --output "${{ github.workspace }}/artifacts" \
             --configuration "${{ env.BUILD_CONFIGURATION }}" \
-            /p:Version="${{ steps.version.outputs.version }}"
+            /p:Version="${{ steps.version.outputs.VERSION }}"
 
       - name: Publish to nuget.org (only on release tags)
         if: startsWith(github.ref, 'refs/tags/release@')
         env:
           NUGET_API_KEY: ${{ secrets.NUGETPUSH }}
           SOURCE: 'https://api.nuget.org/v3/index.json'
-        run: dotnet nuget push **/${{ steps.project-name.outputs.project-name }}.${{ steps.version.outputs.version }}.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
+        run: dotnet nuget push **/${{ steps.project-name.outputs.PROJECT_NAME }}.${{ steps.version.outputs.VERSION }}.nupkg --source ${SOURCE} --api-key ${NUGET_API_KEY}
