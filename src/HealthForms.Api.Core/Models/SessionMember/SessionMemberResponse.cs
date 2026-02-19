@@ -14,5 +14,6 @@ public class SessionMemberResponse
     public string? Status { get; set; }
     public string? StatusDescription { get; set; }
     public bool IsComplete { get; set; }
+    public string? Variant { get; set; }
     public IEnumerable<SessionMemberFormResponse> Forms { get; set; } = new List<SessionMemberFormResponse>();
 }
