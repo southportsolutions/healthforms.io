@@ -15,15 +15,20 @@
 	  <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
 	  <RepositoryType>GIT</RepositoryType>
 	  <PackageTags>HealthForms</PackageTags>
-	  <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
+	  <PackageReleaseNotes>Added session creation models, FormTypeSelectResponse, and Variant field on AddSessionMemberRequest. Updated session request models for nullable properties. Fixed base model classes.</PackageReleaseNotes>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	  <PackageIcon>icon.png</PackageIcon>
 	  <PackageIconUrl />
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
 	<ItemGroup>
 		<None Include="..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
