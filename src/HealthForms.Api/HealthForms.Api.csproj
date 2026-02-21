@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>HealthForms</PackageTags>
-    <PackageReleaseNotes>Added session creation models, FormTypeSelectResponse, and Variant field on AddSessionMemberRequest. Updated session request models for nullable properties. Fixed base model classes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Form Packet Support.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon.png</PackageIcon>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HealthForms.Api.Core" Version="1.0.9" />
+    <PackageReference Include="HealthForms.Api.Core" Version="1.0.10" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.3" />
