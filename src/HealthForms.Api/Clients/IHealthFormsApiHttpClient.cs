@@ -1,5 +1,6 @@
 ﻿using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
+using HealthForms.Api.Core.Models.FormType;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Core.Models.Webhooks;
@@ -23,7 +24,10 @@ public interface IHealthFormsApiHttpClient
     Task<HealthFormsApiResponse<SessionResponse?>> GetSession(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default);
 
     Task<HealthFormsApiResponse<IEnumerable<SessionSelectResponse>>> GetSessionSelectList(string tenantToken, string tenantId, DateTime startDate, CancellationToken cancellationToken = default);
-    
+    Task<HealthFormsApiResponse<List<FormPacketResponse>>> GetFormPackets(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<FormPacketResponse>> CreateFormPacket(string tenantToken, string tenantId, string sessionId, CreateFormPacketRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse<FormPacketResponse>> UpdateFormPacket(string tenantToken, string tenantId, string sessionId, UpdateFormPacketRequest data, CancellationToken cancellationToken = default);
+
     Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string tenantId, string sessionId, int page = 1, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<PagedResponse<List<SessionMemberResponse>>>> GetSessionMembers(string tenantToken, string nextUri, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);

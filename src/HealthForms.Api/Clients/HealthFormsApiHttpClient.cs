@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
+using HealthForms.Api.Core.Models.FormType;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Core.Models.Webhooks;
@@ -212,6 +213,35 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         var response = await GetAsync<IEnumerable<SessionSelectResponse>>($"v1/{tenantId}/sessions/select?startDate={startDate}", tenantToken, cancellationToken);
         response.Data ??= new List<SessionSelectResponse>();
         return response;
+    }
+
+    public async Task<HealthFormsApiResponse<List<FormPacketResponse>>> GetFormPackets(string tenantToken, string tenantId, string sessionId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        var response = await GetAsync<List<FormPacketResponse>>($"v1/{tenantId}/sessions/{sessionId}/form-packets", tenantToken, cancellationToken);
+        response.Data ??= new List<FormPacketResponse>();
+        return response;
+    }
+
+    public async Task<HealthFormsApiResponse<FormPacketResponse>> CreateFormPacket(string tenantToken, string tenantId, string sessionId, CreateFormPacketRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        return await PostJsonAsync<CreateFormPacketRequest, FormPacketResponse>($"v1/{tenantId}/sessions/{sessionId}/form-packets", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<HealthFormsApiResponse<FormPacketResponse>> UpdateFormPacket(string tenantToken, string tenantId, string sessionId, UpdateFormPacketRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+
+        return await PutJsonAsync<UpdateFormPacketRequest, FormPacketResponse>($"v1/{tenantId}/sessions/{sessionId}/form-packets", tenantToken, data, cancellationToken);
     }
 
     #endregion
