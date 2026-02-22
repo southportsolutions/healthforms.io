@@ -14,6 +14,6 @@ public class SessionMemberResponse
     public string? Status { get; set; }
     public string? StatusDescription { get; set; }
     public bool IsComplete { get; set; }
-    public List<string>? FormPackets { get; set; }
+    public IEnumerable<string> FormPackets { get; set; } = new List<string>();
     public IEnumerable<SessionMemberFormResponse> Forms { get; set; } = new List<SessionMemberFormResponse>();
 }
