@@ -11,5 +11,5 @@ public class UpdateSessionMemberRequest
     public string Email { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public DateTime? SendInvitationOn { get; set; }
-    public IEnumerable<string> FormPackets { get; set; } = new List<string>();
+    public List<string>? FormPackets { get; set; } = new();
 }
