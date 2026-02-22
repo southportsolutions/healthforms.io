@@ -26,12 +26,12 @@ on:
     tags: [ 'release@*' ]
   
 env:
-  PROJECT_PATH: ${{vars.PROJECT_PATH_CORE}}
+  PROJECT_PATH: ${{vars.PROJECT_PATH}}
   BUILD_CONFIGURATION: ${{vars.BUILD_CONFIGURATION}}
   RELEASE_TAG: 'refs/tags/release@'
   
 jobs:
-  build-and-deploy:
+  main-build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
