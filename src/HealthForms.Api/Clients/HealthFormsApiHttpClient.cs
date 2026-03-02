@@ -13,7 +13,7 @@ using System.Text.Json.Serialization;
 using HealthForms.Api.Core.Models;
 using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.Errors;
-using HealthForms.Api.Core.Models.FormType;
+using HealthForms.Api.Core.Models.FormPacket;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
 using HealthForms.Api.Core.Models.Webhooks;
@@ -244,6 +244,37 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return await PutJsonAsync<UpdateFormPacketRequest, FormPacketResponse>($"v1/{tenantId}/sessions/{sessionId}/form-packets", tenantToken, data, cancellationToken);
     }
 
+    public async Task<HealthFormsApiResponse> DeleteFormPacket(string tenantToken, string tenantId, string sessionId, string formPacketId, bool removeAssignedForms = false, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(formPacketId)) throw new ArgumentNullException(nameof(formPacketId));
+
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/form-packets/{formPacketId}?removeAssignedForms={removeAssignedForms}", tenantToken, cancellationToken);
+    }
+
+    public async Task<HealthFormsApiResponse> AddFormPacketForm(string tenantToken, string tenantId, string sessionId, string formPacketId, AddFormPacketFormRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(formPacketId)) throw new ArgumentNullException(nameof(formPacketId));
+
+        return await PostAsync($"v1/{tenantId}/sessions/{sessionId}/form-packets/{formPacketId}/forms", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<HealthFormsApiResponse> DeleteFormPacketForm(string tenantToken, string tenantId, string sessionId, string formPacketId, string formTypeId, bool removeAssignedForms = false, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(formPacketId)) throw new ArgumentNullException(nameof(formPacketId));
+        if (string.IsNullOrWhiteSpace(formTypeId)) throw new ArgumentNullException(nameof(formTypeId));
+
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/form-packets/{formPacketId}/forms/{formTypeId}?removeAssignedForms={removeAssignedForms}", tenantToken, cancellationToken);
+    }
+
     #endregion
 
     #region Get SessionMembers
@@ -400,6 +431,56 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #endregion
 
+    #region Member Forms
+
+    public async Task<HealthFormsApiResponse> AddSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(memberId)) throw new ArgumentNullException(nameof(memberId));
+
+        return await PostAsync($"v1/{tenantId}/sessions/{sessionId}/members/{memberId}/forms", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<HealthFormsApiResponse> DeleteSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, string formId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(memberId)) throw new ArgumentNullException(nameof(memberId));
+        if (string.IsNullOrWhiteSpace(formId)) throw new ArgumentNullException(nameof(formId));
+
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{memberId}/forms/{formId}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
+    #region Member Form Packets
+
+    public async Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormPacketRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(memberId)) throw new ArgumentNullException(nameof(memberId));
+
+        return await PostAsync($"v1/{tenantId}/sessions/{sessionId}/members/{memberId}/form-packets", tenantToken, data, cancellationToken);
+    }
+
+    public async Task<HealthFormsApiResponse> DeleteSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, string formPacketId, bool removeAssignedForms = false, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+        if (string.IsNullOrWhiteSpace(sessionId)) throw new ArgumentNullException(nameof(sessionId));
+        if (string.IsNullOrWhiteSpace(memberId)) throw new ArgumentNullException(nameof(memberId));
+        if (string.IsNullOrWhiteSpace(formPacketId)) throw new ArgumentNullException(nameof(formPacketId));
+
+        return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{memberId}/form-packets/{formPacketId}?removeAssignedForms={removeAssignedForms}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
     #region Webhook Subscriptions
 
     public async Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default)
@@ -497,6 +578,22 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
             return new HealthFormsApiResponse<TResponse> { StatusCode = -1, ErrorMessage = $"Unable to deserialize the response from the post request to: {response.RequestMessage.RequestUri.OriginalString}." };
         }
 
+    }
+
+    protected async Task<HealthFormsApiResponse> PostAsync<TRequest>(string route, string tenantToken, TRequest requestData, CancellationToken cancellationToken = default) where TRequest : class
+    {
+        var accessToken = await GetAccessToken(tenantToken);
+        HttpClient.SetBearerToken(accessToken.AccessToken);
+
+        var response = await HttpClient.PostAsJsonAsync($"{_options.HostAddressApi}{route}", requestData, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var responseError = await LogOnErrorResponse(response);
+            var errorMessage = responseError?.Message ?? $"The Post request failed with response code {response.StatusCode} to: {response.RequestMessage.RequestUri.OriginalString}.";
+            return new HealthFormsApiResponse { StatusCode = (int)response.StatusCode, ErrorMessage = errorMessage, Error = responseError };
+        }
+
+        return new HealthFormsApiResponse { StatusCode = (int)response.StatusCode };
     }
 
     #endregion
