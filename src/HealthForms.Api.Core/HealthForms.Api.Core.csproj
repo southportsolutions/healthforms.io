@@ -15,7 +15,7 @@
 	  <RepositoryUrl>https://github.com/southportsolutions/healthforms.io</RepositoryUrl>
 	  <RepositoryType>GIT</RepositoryType>
 	  <PackageTags>HealthForms</PackageTags>
-	  <PackageReleaseNotes>Added session creation models, FormTypeSelectResponse, and Variant field on AddSessionMemberRequest. Updated session request models for nullable properties. Fixed base model classes.</PackageReleaseNotes>
+	  <PackageReleaseNotes>Added Models/FormPacket namespace with AddFormPacketFormRequest, and moved CreateFormPacketRequest, UpdateFormPacketRequest, FormPacketResponse from FormType namespace. Added AddMemberFormRequest and AddMemberFormPacketRequest to SessionMember models. Removed FormPackets from UpdateSessionMemberRequest (use dedicated add/remove endpoints instead).</PackageReleaseNotes>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	  <PackageIcon>icon.png</PackageIcon>

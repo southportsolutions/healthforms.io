@@ -38,15 +38,15 @@ Tests are **integration tests** that call the live HealthForms.io dev API. They 
 - `HFSESSIONID` - Session ID for test operations
 - `HDREDIRECTURL` - OAuth redirect URL
 
-Tests use **xUnit** with **AutoFixture + AutoMoq** for test data generation and **Moq** for mocking. The test base class `UnitTestBase<T>` provides the AutoFixture setup. Test options (`HealthFormsApiTestOptions`) override the API host to point to the dev environment (`{HostAddress}dev/api/` and `{HostAddress}dev/account/`).
+Tests use **xUnit** with **AutoFixture + AutoMoq** for test data generation and **Moq** for mocking. The test base class `UnitTestBase<T>` provides the AutoFixture setup. Test options (`HealthFormsApiTestOptions` in `src/HealthForms.Api.Tests/Options/`) override the API host to point to the dev environment (`{HostAddress}dev/api/` and `{HostAddress}dev/account/`).
 
 ## Architecture
 
 ### Two-Package Structure
 
-- **`HealthForms.Api.Core`** (netstandard2.0) — Models only, no HTTP dependencies. Contains all request/response DTOs organized by domain: `Models/Sessions/`, `Models/SessionMember/`, `Models/Webhooks/`, `Models/Auth/`, `Models/Errors/`, `Models/FormType/`. Depends only on `System.Text.Json`.
+- **`HealthForms.Api.Core`** (netstandard2.0) — Models only, no HTTP dependencies. Contains all request/response DTOs organized by domain: `Models/Sessions/`, `Models/SessionMember/`, `Models/Webhooks/`, `Models/Auth/`, `Models/Errors/`, `Models/FormType/`. Depends only on `System.Text.Json`. This package is referenced by `HealthForms.Api` as a NuGet package dependency (not a project reference), so changes to Core models require publishing a new Core version first.
 
-- **`HealthForms.Api`** (netstandard2.0) — HTTP client, OAuth logic, DI extensions. References `HealthForms.Api.Core` as a NuGet package (not a project reference). Key types:
+- **`HealthForms.Api`** (netstandard2.0) — HTTP client, OAuth logic, DI extensions. Key types:
   - `IHealthFormsApiHttpClient` / `HealthFormsApiHttpClient` — Main client interface and implementation
   - `HealthFormsApiHttpClientDisposable` — Subclass for .NET Framework (non-DI) usage, manages HttpClient disposal
   - `HealthFormsApiDependencyInjectionExtension.AddHealthForms()` — Registers the typed HttpClient with Polly retry policy
@@ -64,13 +64,16 @@ The API routes are versioned as `v1/{tenantId}/...` and the base URL is derived 
 
 Uses `System.Text.Json` with `camelCase` naming policy and `JsonStringEnumConverter`. This applies across both Core models and API client deserialization.
 
-## CI/CD
+## Versioning and Releases
+
+Package versions are set in each `.csproj` file's `<Version>` element. When releasing:
+
+1. **Core changes**: Update `HealthForms.Api.Core.csproj` version, tag with `release-core@X.Y.Z`, then update the `HealthForms.Api.Core` PackageReference in `HealthForms.Api.csproj`
+2. **API changes**: Update `HealthForms.Api.csproj` version, tag with `release@X.Y.Z`
 
 GitHub Actions workflows in `.github/workflows/`:
 - `main.yml` — Builds and packs `HealthForms.Api`; publishes to NuGet on `release@*` tags
 - `main-core.yml` — Builds and packs `HealthForms.Api.Core`; publishes on `release-core@*` tags
-
-Azure DevOps pipelines also exist in `src/DevOps/`.
 
 ## Samples
 

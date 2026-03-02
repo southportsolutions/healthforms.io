@@ -1,4 +1,4 @@
-namespace HealthForms.Api.Core.Models.FormType;
+namespace HealthForms.Api.Core.Models.FormPacket;
 
 public class CreateFormPacketRequest
 {
