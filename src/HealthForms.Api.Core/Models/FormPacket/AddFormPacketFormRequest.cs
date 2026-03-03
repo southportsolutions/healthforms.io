@@ -2,5 +2,5 @@ namespace HealthForms.Api.Core.Models.FormPacket;
 
 public class AddFormPacketFormRequest
 {
-    public string FormTypeId { get; set; } = string.Empty;
+    public string SessionFormId { get; set; } = string.Empty;
 }
