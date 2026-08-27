@@ -8,4 +8,5 @@ public class SessionFormTypeRequest : SessionFormTypeRequestBase
     public override DateTime? SubmissionDeadline { get; set; }
     public override bool IsRequired { get; set; }
     public override string? SubmissionInstructions { get; set; }
+    public override List<string>? Tags { get; set; }
 }

@@ -11,4 +11,5 @@ public class AddSessionMemberRequest
     public string? Phone { get; set; }
     public DateTime? SendInvitationOn { get; set; }
     public List<string>? FormPacketIds { get; set; } = new();
+    public List<string>? Tags { get; set; } = new();
 }

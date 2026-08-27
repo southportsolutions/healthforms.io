@@ -45,9 +45,9 @@ public interface IHealthFormsApiHttpClient
     Task<HealthFormsApiResponse> DeleteSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse> DeleteSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
 
-    Task<HealthFormsApiResponse> AddSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> AddSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, AddSessionMemberFormRequest data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse> DeleteSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, string formId, CancellationToken cancellationToken = default);
-    Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormPacketRequest data, CancellationToken cancellationToken = default);
+    Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddSessionMemberFormPacketRequest data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse> DeleteSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, string formPacketId, bool removeAssignedForms = false, CancellationToken cancellationToken = default);
 
     Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default);
