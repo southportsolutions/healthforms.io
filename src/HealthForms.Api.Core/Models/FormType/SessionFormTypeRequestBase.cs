@@ -8,4 +8,5 @@ public abstract class SessionFormTypeRequestBase
     public abstract DateTime? SubmissionDeadline { get; set; }
     public abstract bool IsRequired { get; set; }
     public abstract string? SubmissionInstructions { get; set; }
+    public abstract List<string>? Tags { get; set; }
 }

@@ -5,5 +5,6 @@ public class FormPacketResponse
     public string? Id { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public List<string>? Tags { get; set; }
     public List<string>? SessionFormIds { get; set; }
 }

@@ -433,7 +433,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Member Forms
 
-    public async Task<HealthFormsApiResponse> AddSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormRequest data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> AddSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, AddSessionMemberFormRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
@@ -458,7 +458,7 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
 
     #region Member Form Packets
 
-    public async Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddMemberFormPacketRequest data, CancellationToken cancellationToken = default)
+    public async Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddSessionMemberFormPacketRequest data, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
         if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
