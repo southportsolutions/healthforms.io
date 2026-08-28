@@ -10,4 +10,5 @@ public class SessionCreateRequest : SessionCreateRequestBase<SessionFormTypeRequ
     public override string? Description { get; set; }
     public override DateTime? InvitationSendDate { get; set; }
     public override List<SessionFormTypeRequest> FormTypes { get; set; } = new();
+    public override List<string>? Tags { get; set; } = new();
 }

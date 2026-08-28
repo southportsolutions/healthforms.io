@@ -2,8 +2,8 @@
 
 public class WebhookSubscriptionResponse
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = "";
     public WebhookType Type { get; set; }
-    public string EndpointUrl { get; set; }
+    public string EndpointUrl { get; set; } = "";
     public bool IsActive { get; set; }
 }

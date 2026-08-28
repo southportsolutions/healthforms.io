@@ -2,6 +2,12 @@
 
 public class WebhookData<T> where T : class
 {
+    public WebhookData(string eventId, T data)
+    {
+        EventId = eventId;
+        Data = data;
+    }
+
     public DateTime Timestamp { get; set; }
     public WebhookType Type { get; set; }
     public string EventId { get; set; }
