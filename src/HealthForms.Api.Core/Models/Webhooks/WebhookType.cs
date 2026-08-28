@@ -7,5 +7,8 @@ public enum WebhookType
     SessionUpdated,
     SessionMemberAdded,
     SessionMemberRemoved,
-    SessionMemberUpdated
+    SessionMemberUpdated,
+    SessionMemberFormAdded,
+    SessionMemberFormUpdated,
+    SessionMemberFormRemoved,
 }

@@ -3,5 +3,5 @@
 public class WebhookSubscriptionRequest
 {
     public WebhookType Type { get; set; }
-    public string EndpointUrl { get; set; }
+    public string EndpointUrl { get; set; } = "";
 }

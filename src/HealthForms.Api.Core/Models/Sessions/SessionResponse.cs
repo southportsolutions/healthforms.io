@@ -10,4 +10,5 @@ public class SessionResponse
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public IEnumerable<SessionFormResponse> Forms { get; set; } = new List<SessionFormResponse>();
+    public IEnumerable<string>? Tags { get; set; }
 }

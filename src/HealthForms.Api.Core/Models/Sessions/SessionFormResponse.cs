@@ -10,4 +10,5 @@ public class SessionFormResponse
     public bool IsFormDateRequired { get; set; }
     public string? FormDateLabel { get; set; }
     public string? FormDateHelpText { get; set; }
+    public IEnumerable<string>? Tags { get; set; }
 }
