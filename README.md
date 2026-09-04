@@ -163,6 +163,26 @@ var deleted = await api.DeleteSessionMemberByExternalId(tenantToken, tenantId, s
 var deleted = await api.DeleteSessionMemberByExternalAttendeeId(tenantToken, tenantId, sessionId, externalAttendeeId);
 ```
 
+### Users
+
+Adds a Manager user for the tenant, or updates the user that already has that email address (names are updated, revoked access is restored, and any missing roles are added; roles are never removed). New users receive an invitation email.
+
+Only three roles can be granted through the API: `ParticipantViewer`, `ParticipantFormReviewer`, and `ParticipantFormViewer`. Each role is scoped to a session; set `GroupId` to limit it to one group in that session, or leave it null for the whole session.
+
+```csharp
+var user = await api.AddUser(tenantToken, tenantId, new AddUserRequest
+{
+    FirstName = "Jane",
+    LastName = "Doe",
+    EmailAddress = "jane@example.com",
+    Roles =
+    [
+        new AddUserRoleRequest { Role = UserRole.ParticipantViewer, SessionId = sessionId },
+        new AddUserRoleRequest { Role = UserRole.ParticipantFormReviewer, SessionId = sessionId, GroupId = groupId }
+    ]
+});
+```
+
 ### Webhooks
 
 ```csharp
