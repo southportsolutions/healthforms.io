@@ -3,6 +3,7 @@ using HealthForms.Api.Core.Models.Auth;
 using HealthForms.Api.Core.Models.FormPacket;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
+using HealthForms.Api.Core.Models.Users;
 using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Shared;
 using IdentityModel.Client;
@@ -49,6 +50,8 @@ public interface IHealthFormsApiHttpClient
     Task<HealthFormsApiResponse> DeleteSessionMemberForm(string tenantToken, string tenantId, string sessionId, string memberId, string formId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse> AddSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, AddSessionMemberFormPacketRequest data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse> DeleteSessionMemberFormPacket(string tenantToken, string tenantId, string sessionId, string memberId, string formPacketId, bool removeAssignedForms = false, CancellationToken cancellationToken = default);
+
+    Task<HealthFormsApiResponse<UserResponse>> AddUser(string tenantToken, string tenantId, AddUserRequest data, CancellationToken cancellationToken = default);
 
     Task<HealthFormsApiResponse<List<WebhookSubscriptionResponse>>> GetWebhookSubscriptions(string tenantToken, string tenantId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<WebhookSubscriptionResponse>> AddWebhookSubscription(string tenantToken, string tenantId, WebhookSubscriptionRequest data, CancellationToken cancellationToken = default);

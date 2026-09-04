@@ -2,6 +2,7 @@
 using AutoFixture;
 using HealthForms.Api.Clients;
 using HealthForms.Api.Core.Models.SessionMember;
+using HealthForms.Api.Core.Models.Users;
 using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Errors;
 using Microsoft.Extensions.Logging;
@@ -764,6 +765,99 @@ public class HealthFormsApiHttpClientTests : UnitTestBase<HealthFormsApiHttpClie
         Assert.NotNull(response);
         Assert.Equal((int)HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal("Not Found", response.ErrorMessage);
+    }
+
+    #endregion
+
+    #region Add User
+
+    private AddUserRequest NewUserRequest() => new()
+    {
+        FirstName = "Test",
+        LastName = "User",
+        EmailAddress = "test-user@southportsolutions.com",
+        Roles = [new AddUserRoleRequest { Role = UserRole.ParticipantViewer, SessionId = SessionId }]
+    };
+
+    [Fact]
+    public async Task AddUser_MissingTenantToken()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.AddUser("", TenantId, NewUserRequest()));
+        Assert.Equal("tenantToken", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task AddUser_MissingTenantId()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ClassUnderTest.AddUser(TenantToken, "", NewUserRequest()));
+        Assert.Equal("tenantId", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task AddUser_InvalidTenantId()
+    {
+        var response = await ClassUnderTest.AddUser(TenantToken, "1234567890", NewUserRequest());
+        Assert.False(response.IsSuccess);
+        Assert.Contains("4003", response.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task AddUser_MissingFirstName()
+    {
+        var request = NewUserRequest();
+        request.FirstName = "";
+        var response = await ClassUnderTest.AddUser(TenantToken, TenantId, request);
+        Assert.Contains("3009", response.ErrorMessage);
+        Assert.Contains(response.Error.ValidationErrors, c => c.Field == "FirstName");
+    }
+
+    [Fact]
+    public async Task AddUser_MissingEmailAddress()
+    {
+        var request = NewUserRequest();
+        request.EmailAddress = "";
+        var response = await ClassUnderTest.AddUser(TenantToken, TenantId, request);
+        Assert.Contains("3009", response.ErrorMessage);
+        Assert.Contains(response.Error.ValidationErrors, c => c.Field == "EmailAddress");
+    }
+
+    [Fact]
+    public async Task AddUser_RoleMissingSessionId()
+    {
+        var request = NewUserRequest();
+        request.Roles[0].SessionId = "";
+        var response = await ClassUnderTest.AddUser(TenantToken, TenantId, request);
+        Assert.Contains("3009", response.ErrorMessage);
+        Assert.Contains(response.Error.ValidationErrors, c => c.Field == "SessionId");
+    }
+
+    [Fact]
+    public async Task AddUser_UnknownSession()
+    {
+        var request = NewUserRequest();
+        request.Roles[0].SessionId = "0000000000";
+        var response = await ClassUnderTest.AddUser(TenantToken, TenantId, request);
+        Assert.Contains("3010", response.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task AddUser()
+    {
+        var response = await ClassUnderTest.AddUser(TenantToken, TenantId, NewUserRequest());
+        Assert.True(response.IsSuccess);
+        Assert.NotNull(response.Data.Id);
+        Assert.Equal("test-user@southportsolutions.com", response.Data.EmailAddress);
+        Assert.Contains(response.Data.Roles, r => r.Role == UserRole.ParticipantViewer && r.SessionId == SessionId && r.GroupId == null);
+    }
+
+    [Fact]
+    public async Task AddUser_SameEmailTwice_ReturnsSameUser()
+    {
+        var first = await ClassUnderTest.AddUser(TenantToken, TenantId, NewUserRequest());
+        var second = await ClassUnderTest.AddUser(TenantToken, TenantId, NewUserRequest());
+        Assert.True(second.IsSuccess);
+        Assert.Equal(first.Data.Id, second.Data.Id);
+        Assert.Single(second.Data.Roles, r => r.Role == UserRole.ParticipantViewer && r.SessionId == SessionId);
     }
 
     #endregion

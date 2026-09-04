@@ -16,6 +16,7 @@ using HealthForms.Api.Core.Models.Errors;
 using HealthForms.Api.Core.Models.FormPacket;
 using HealthForms.Api.Core.Models.SessionMember;
 using HealthForms.Api.Core.Models.Sessions;
+using HealthForms.Api.Core.Models.Users;
 using HealthForms.Api.Core.Models.Webhooks;
 using HealthForms.Api.Shared;
 
@@ -477,6 +478,18 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         if (string.IsNullOrWhiteSpace(formPacketId)) throw new ArgumentNullException(nameof(formPacketId));
 
         return await DeleteAsync($"v1/{tenantId}/sessions/{sessionId}/members/{memberId}/form-packets/{formPacketId}?removeAssignedForms={removeAssignedForms}", tenantToken, cancellationToken);
+    }
+
+    #endregion
+
+    #region Users
+
+    public async Task<HealthFormsApiResponse<UserResponse>> AddUser(string tenantToken, string tenantId, AddUserRequest data, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken)) throw new ArgumentNullException(nameof(tenantToken));
+        if (string.IsNullOrWhiteSpace(tenantId)) throw new ArgumentNullException(nameof(tenantId));
+
+        return await PostJsonAsync<AddUserRequest, UserResponse>($"v1/{tenantId}/users", tenantToken, data, cancellationToken);
     }
 
     #endregion
