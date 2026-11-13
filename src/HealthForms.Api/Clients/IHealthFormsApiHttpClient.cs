@@ -37,6 +37,18 @@ public interface IHealthFormsApiHttpClient
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMember(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse?>> GetSessionMemberByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Returns the invitation link, code and status of one session member. The response has StatusCode 404 when the member is not in the session.
+    /// </summary>
+    Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitation(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Returns the invitation link, code and status of one session member, found by the external member ID. The response has StatusCode 404 when the member is not in the session.
+    /// </summary>
+    Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitationByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Returns the invitation link, code and status of one session member, found by the external attendee ID. The response has StatusCode 404 when the member is not in the session.
+    /// </summary>
+    Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitationByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberSearchResponse>> SearchSessionMember(string tenantToken, string tenantId, string sessionId, SessionMemberSearchRequest request, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<SessionMemberResponse>> AddSessionMember(string tenantToken, string tenantId, string sessionId, AddSessionMemberRequest data, CancellationToken cancellationToken = default);
     Task<HealthFormsApiResponse<AddSessionMemberBulkStartResponse>> AddSessionMembers(string tenantToken, string tenantId, string sessionId, List<AddSessionMemberRequest> data, CancellationToken cancellationToken = default);
