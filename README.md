@@ -67,6 +67,8 @@ The client targets .NET Standard 2.0, so it runs on .NET Framework 4.6.1 and lat
          "invitationSendOn": "2026-05-01T00:00:00Z",
          "invitationSentOn": "2026-05-01T09:00:12Z",
          "invitationAccepted": true,
+         "invitationUrl": null,
+         "invitationCode": null,
          "status": "WaitingForForms",
          "statusDescription": "Waiting for forms",
          "isComplete": false,
@@ -277,7 +279,7 @@ await api.DeleteFormPacket(TENANT_TOKEN, TENANT_ID, SESSION_ID, created.Data.Id,
 
 ### Look up members
 
-`GetSessionMembers` returns 100 members per page. The three single-member lookups return `Data = null` with status 404 when nothing matches.
+`GetSessionMembers` returns 100 members per page. The three single-member lookups and the three invitation lookups return `Data = null` with status 404 when no member matches.
 
 ```csharp
 var members = await api.GetSessionMembers(TENANT_TOKEN, TENANT_ID, SESSION_ID);
@@ -488,7 +490,7 @@ Failed calls come back in the response object. The API's error body is:
 | 400 | 4015 | The session is locked. | The customer removes the lock in HealthForms.io. |
 | 413 | | The request body is too large. | Send fewer members per bulk call. |
 
-Only the three single-member `Get` methods and `GetSession` return 404. They set `Data` to null and `ErrorMessage` to `Not Found` with no error body.
+Only the three single-member `Get` methods, the three `GetSessionMemberInvitation` methods and `GetSession` return 404. They set `Data` to null and `ErrorMessage` to `Not Found` with no error body.
 
 ## Pagination
 
@@ -515,6 +517,9 @@ Routes are relative to `https://app.healthforms.io/api/`. Query parameters shown
 | `GetSessionMember` | GET | `v1/{tenantId}/sessions/{sessionId}/members/{memberId}` |
 | `GetSessionMemberByExternalId` | GET | `v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}` |
 | `GetSessionMemberByExternalAttendeeId` | GET | `v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}` |
+| `GetSessionMemberInvitation` | GET | `v1/{tenantId}/sessions/{sessionId}/members/{memberId}/invitation` |
+| `GetSessionMemberInvitationByExternalId` | GET | `v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}/invitation` |
+| `GetSessionMemberInvitationByExternalAttendeeId` | GET | `v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}/invitation` |
 | `SearchSessionMember` | POST | `v1/{tenantId}/sessions/{sessionId}/members/search` |
 | `AddSessionMember` | POST | `v1/{tenantId}/sessions/{sessionId}/members` |
 | `AddSessionMembers` | POST | `v1/{tenantId}/sessions/{sessionId}/members/bulk` |

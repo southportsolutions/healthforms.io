@@ -335,6 +335,84 @@ public class HealthFormsApiHttpClient : IHealthFormsApiHttpClient
         return response;
     }
 
+    public async Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitation(string tenantToken, string tenantId, string sessionId, string sessionMemberId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken))
+        {
+            throw new ArgumentNullException(nameof(tenantToken));
+        }
+
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            throw new ArgumentNullException(nameof(tenantId));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            throw new ArgumentNullException(nameof(sessionId));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionMemberId))
+        {
+            throw new ArgumentNullException(nameof(sessionMemberId));
+        }
+
+        var response = await GetAsync<SessionMemberInvitationResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/{sessionMemberId}/invitation", tenantToken, cancellationToken);
+        return response;
+    }
+
+    public async Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitationByExternalId(string tenantToken, string tenantId, string sessionId, string externalMemberId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken))
+        {
+            throw new ArgumentNullException(nameof(tenantToken));
+        }
+
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            throw new ArgumentNullException(nameof(tenantId));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            throw new ArgumentNullException(nameof(sessionId));
+        }
+
+        if (string.IsNullOrWhiteSpace(externalMemberId))
+        {
+            throw new ArgumentNullException(nameof(externalMemberId));
+        }
+
+        var response = await GetAsync<SessionMemberInvitationResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external/{externalMemberId}/invitation", tenantToken, cancellationToken);
+        return response;
+    }
+
+    public async Task<HealthFormsApiResponse<SessionMemberInvitationResponse?>> GetSessionMemberInvitationByExternalAttendeeId(string tenantToken, string tenantId, string sessionId, string externalAttendeeId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(tenantToken))
+        {
+            throw new ArgumentNullException(nameof(tenantToken));
+        }
+
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            throw new ArgumentNullException(nameof(tenantId));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            throw new ArgumentNullException(nameof(sessionId));
+        }
+
+        if (string.IsNullOrWhiteSpace(externalAttendeeId))
+        {
+            throw new ArgumentNullException(nameof(externalAttendeeId));
+        }
+
+        var response = await GetAsync<SessionMemberInvitationResponse?>($"v1/{tenantId}/sessions/{sessionId}/members/external-attendee/{externalAttendeeId}/invitation", tenantToken, cancellationToken);
+        return response;
+    }
+
     #endregion
 
     #region Find SessionMembers
