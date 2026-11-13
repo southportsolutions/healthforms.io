@@ -8,6 +8,8 @@ public class SessionCreateRequest : SessionCreateRequestBase<SessionFormTypeRequ
     public override DateTime StartDate { get; set; }
     public override DateTime EndDate { get; set; }
     public override string? Description { get; set; }
+    public override string? SupportEmailAddress { get; set; }
+    public override string? SupportPhoneNumber { get; set; }
     public override DateTime? InvitationSendDate { get; set; }
     public override List<SessionFormTypeRequest> FormTypes { get; set; } = new();
     public override List<string>? Tags { get; set; } = new();

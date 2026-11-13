@@ -9,6 +9,8 @@ public abstract class SessionCreateRequestBase<TFormTypeRequest> where TFormType
     public abstract DateTime StartDate { get; set; }
     public abstract DateTime EndDate { get; set; }
     public abstract string? Description { get; set; }
+    public abstract string? SupportEmailAddress { get; set; }
+    public abstract string? SupportPhoneNumber { get; set; }
     public abstract DateTime? InvitationSendDate { get; set; }
     public abstract List<TFormTypeRequest> FormTypes { get; set; }
     public abstract List<string>? Tags { get; set; }

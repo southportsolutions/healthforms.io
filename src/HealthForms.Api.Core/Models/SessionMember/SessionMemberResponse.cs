@@ -9,6 +9,19 @@ public class SessionMemberResponse
     public DateTime? InvitationSendOn { get; set; }
     public DateTime? InvitationSentOn { get; set; }
     public bool InvitationAccepted { get; set; } = false;
+
+    /// <summary>
+    /// The link the participant opens to accept the invitation.
+    /// Null when the invitation has been accepted or the session has ended.
+    /// </summary>
+    public string? InvitationUrl { get; set; }
+
+    /// <summary>
+    /// The code the participant can enter on the invitation page.
+    /// Null when the invitation has been accepted or the session has ended.
+    /// </summary>
+    public string? InvitationCode { get; set; }
+
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Status { get; set; }

@@ -285,7 +285,14 @@ var members = await api.GetSessionMembers(TENANT_TOKEN, TENANT_ID, SESSION_ID);
 var byId = await api.GetSessionMember(TENANT_TOKEN, TENANT_ID, SESSION_ID, "a8Kd2mQz4p");
 var byMemberId = await api.GetSessionMemberByExternalId(TENANT_TOKEN, TENANT_ID, SESSION_ID, "reg-2026-0417");
 var byAttendeeId = await api.GetSessionMemberByExternalAttendeeId(TENANT_TOKEN, TENANT_ID, SESSION_ID, "camper-1042");
+
+// Get a member's invitation link, code and status (by ID, external ID, or external attendee ID)
+var invitationById = await api.GetSessionMemberInvitation(TENANT_TOKEN, TENANT_ID, SESSION_ID, "a8Kd2mQz4p");
+var invitationByMemberId = await api.GetSessionMemberInvitationByExternalId(TENANT_TOKEN, TENANT_ID, SESSION_ID, "reg-2026-0417");
+var invitationByAttendeeId = await api.GetSessionMemberInvitationByExternalAttendeeId(TENANT_TOKEN, TENANT_ID, SESSION_ID, "camper-1042");
 ```
+
+Each `SessionMemberResponse` carries `InvitationUrl` and `InvitationCode` while the invitation has not been accepted. Give the participant the link, or the code to enter on the invitation page, when you deliver invitations yourself. Both are null once the invitation is accepted or the session's end date has passed. The code changes when the invitation is resent or reset, so read the member again before you send it. The invitation methods return the same two values with `InvitationAccepted`, `InvitationSendOn` and `InvitationSentOn`, and nothing else.
 
 To find out whether a person you are about to add already exists, use `SearchSessionMember`. It takes both external IDs and reports which one matched.
 
